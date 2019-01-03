@@ -6,14 +6,22 @@ drawing at the end of file
 
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QFormLayout, QVBoxLayout, QFrame, QPushButton,
+from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QFrame, QPushButton,
                              QVBoxLayout, QHBoxLayout, QFileDialog, QLabel,
                              QPushButton, QInputDialog, QSpinBox, QDialog, 
-                             QLineEdit, QWidget, QCheckBox, QDialogButtonBox)
+                             QLineEdit, QWidget, QCheckBox, QDialogButtonBox,
+                             QSpacerItem)
 import krita
 import importlib
 from pathlib import Path # to have paths works whether it's windows or unix
 from . import spritesheetmanager
+
+        
+class describedWidget:
+    def __init__ (self, widget, descri, tooltip = ""):
+        self.widget = widget
+        self.descri = descri
+        self.tooltip = tooltip
 
 
 class UISpritesheetManager(object):
@@ -35,8 +43,9 @@ class UISpritesheetManager(object):
 
         # and the export directory
         self.exportDirTx = QLineEdit()
-        self.exportDirButt = QPushButton("Change Export Directory")
-        self.exportDirResetButt = QPushButton("Reset to current Directory")
+        self.exportDirButt = QPushButton("Change export directory")
+        self.exportDirResetButt = QPushButton("Reset to current directory")
+        self.exportDirResetButt.setToolTip("Reset export directory to current .kra document's directory")
         self.exportDirButt.clicked.connect(self.changeExportDir)
         self.exportDirResetButt.clicked.connect(self.resetExportDir)
         self.exportDir = QHBoxLayout()
@@ -44,14 +53,11 @@ class UISpritesheetManager(object):
 
         self.spinBoxes = QHBoxLayout() # a box holding the boxes with rows columns and start end
 
-        self.rowsColumns = QFormLayout()
         self.rows= QSpinBox()
         self.columns= QSpinBox()
         self.rows.minimum = 0
         self.columns.minimum = 0
 
-        self.startEnd = QFormLayout()
-        self.startEnd.setAlignment(Qt.AlignRight)
         self.start = QSpinBox()
         self.end = QSpinBox()
         self.step = QSpinBox()
@@ -59,7 +65,6 @@ class UISpritesheetManager(object):
         self.end.minimum = 0
         self.step.minimum = 1
         self.step.setValue(1)
-        self.step.setToolTip("export every 'step' frame")
 
         # to be placed outside of spinBoxes, still in outerLayout
         self.line = QFrame()
@@ -79,6 +84,9 @@ class UISpritesheetManager(object):
         self.OkCancelButtonBox.rejected.connect(self.mainDialog.close)
 
         self.space = 10
+        
+        self.spacer = QSpacerItem(self.space, self.space)
+        self.spacerBig = QSpacerItem(self.space*2, self.space*2)
 
         self.exportPath = Path.home()
 
@@ -86,62 +94,103 @@ class UISpritesheetManager(object):
 
 
 
-    # QFormLayout doesn't have addLayout, but QVBoxLayout doesn't have addRow
-    # so to have a vertical list of widgets with each its description on the left
-    # like AddRow does
-    # it seems I need to use a QFormLayout inside a QVBoxLayout
-    # for each widget
-    def addQuickWidgetDescri(self, parent, dico, align = Qt.AlignLeft):
-        layout = QFormLayout()
-        for descri, widget in dico.items():
-            layout.addRow(descri, widget)
+    # I would have used QFormLayout's addRow
+    # except it doesn't let you add a tooltip to the row's name
+    # (adding a tooltip to the whole layout would have been best but doesn't seem possible)
+    def addDescribedWidget(self, parent, listWidgets, align = Qt.AlignLeft):
+        layout = QGridLayout()
+        row = 0
+        for widget in listWidgets:
+            label = QLabel(widget.descri)
+            label.setBuddy(widget.widget)
+            layout.addWidget(label, row, 0)
+            layout.addWidget(widget.widget, row, 1)
+            if widget.tooltip != "":
+                widget.widget.setToolTip(widget.tooltip)
+                label.setToolTip(widget.tooltip)
+            row += 1
         layout.setAlignment(align)
         parent.addLayout(layout)
+        return layout
+
+
+
+
 
     def initialize_export(self):
 
         # putting stuff in boxes
-        self.exportName.setText("Spritesheet")
-        exportNameDico = {"Export name:": self.exportName}
-        self.addQuickWidgetDescri(parent = self.outerLayout, dico = exportNameDico)
-
-        self.outerLayout.addWidget(self.exportDirTx)
+        self.exportName.setText(self.man.exportName)
+        self.addDescribedWidget(parent = self.outerLayout, listWidgets = [
+        describedWidget(
+        widget = self.exportName, 
+        descri = "Export name:", 
+        tooltip = "The name of the exported spritesheet file")])
+        self.addDescribedWidget(parent = self.outerLayout, listWidgets = [
+        describedWidget(
+        widget = self.exportDirTx, 
+        descri = "Export Directory:", 
+        tooltip = "The directory the spritesheet will be exported to")])
+        
         self.exportDir.addWidget(self.exportDirButt)
         self.exportDir.addWidget(self.exportDirResetButt)
-
         self.outerLayout.addLayout(self.exportDir)
+
+
+        self.outerLayout.addItem(self.spacerBig)
+
 
         self.outerLayout.addWidget(self.defaultRowsColumnsInfo)
 
-        self.rowsColumns.addRow("Rows:", self.rows)
-        self.rowsColumns.addRow("Columns:", self.columns)
-        self.startEnd.addRow("Start:", self.start)
-        self.startEnd.addRow("End:", self.end)
-        self.startEnd.addRow("Step:", self.step)
+        self.addDescribedWidget(parent = self.spinBoxes, listWidgets = [
+        describedWidget(
+        widget = self.rows, 
+        descri = "Rows:", 
+        tooltip = "Number of rows of the spritesheet; \ndefault is trying to square"), 
+        describedWidget(
+        widget = self.columns, 
+        descri = "Columns:", 
+        tooltip = "Number of columns of the spritesheet; \ndefault is trying to square")])
+        
+        self.addDescribedWidget(parent = self.spinBoxes, listWidgets = [
+        describedWidget(
+        widget = self.start, 
+        descri = "Start:", 
+        tooltip = "First frame of the animation timeline (included) to be added to the spritesheet; \ndefault is the Start parameter of the Animation docker"), 
+        describedWidget(
+        widget = self.end, 
+        descri = "End:", 
+        tooltip = "Last frame of the animation timeline (included) to be added to the spritesheet; \ndefault is the End parameter of the Animation docker"), 
+        describedWidget(
+        widget = self.step, 
+        descri = "Step:", 
+        tooltip = "only consider every 'step' frame to be added to the spritesheet; \ndefault is 1 (use every frame)")])
+
 
         # and boxes in bigger boxes
-        self.spinBoxes.addLayout(self.rowsColumns)
-        self.spinBoxes.addLayout(self.startEnd)
-
         self.outerLayout.addLayout(self.spinBoxes)
 
-        self.outerLayout.addSpacing(self.space)
-        self.outerLayout.addWidget(self.line)
-        self.outerLayout.addSpacing(self.space)
-
-        # I'm not sure whether I want to let people use the overwrite toggle
-        # it could lead to accidentally destroying stuff unless I change the code a bit
-        # so for now it's commented
-        #checkBoxesDico1 = {"overwrite existant? ": self.overwrite}
-        checkBoxesDico2 = {"remove individual sprites? ": self.removeTmp}
-        #self.addQuickWidgetDescri(parent = self.checkBoxes, dico = checkBoxesDico1)
-        self.addQuickWidgetDescri(parent = self.checkBoxes, dico = checkBoxesDico2)
-        self.outerLayout.addLayout(self.checkBoxes)
-
-        self.outerLayout.addLayout(self.exportDir)
-
+        self.addDescribedWidget(parent = self.checkBoxes, listWidgets = [
+        describedWidget(
+        descri = "Remove individual sprites?", 
+        widget = self.removeTmp, 
+        tooltip = "Once the spritesheet export is done, \nwhether to remove the individual exported sprites")])
+        
+        #self.overwriteLayout = self.addDescribedWidget(parent = self.checkBoxes, listWidgets = [
+        #describedWidget(
+        #descri = "Overwrite existant?", 
+        #widget = self.overwrite, 
+        #tooltip = "If there is already a folder with the same name as the individual sprites export folder, \nwhether to create a new one (unchecked) or write the sprites in the existing folder, \npossibly overwriting other files (checked)")])
+        
         self.outerLayout.addWidget(self.line2)
-        self.outerLayout.addSpacing(self.space)
+        self.outerLayout.addItem(self.spacer)
+        
+        # just a test, then it'll have to change dynamically
+        self.outerLayout.addLayout(self.checkBoxes)
+        # ask for the sprites export folder name here
+
+        self.outerLayout.addItem(self.spacer)
+        self.outerLayout.addWidget(self.line)
 
         self.outerLayout.addWidget(self.OkCancelButtonBox)
 
@@ -179,7 +228,7 @@ class UISpritesheetManager(object):
         self.man.start = self.start.value()
         self.man.end = self.end.value()
         self.man.step = self.step.value()
-        self.man.overwrite = self.overwrite.isChecked()
+        #self.man.overwrite = self.overwrite.isChecked()
         self.man.removeTmp = self.removeTmp.isChecked()
         self.man.exportDir = Path(self.exportPath)
         self.man.export()
@@ -189,6 +238,7 @@ class UISpritesheetManager(object):
 |----------------------------outer layout: VBoxLayout
 | export name
 | export directory [    ]
+|(space)
 | 0 as default info
 ||-------------------------------spinBoxes: HBoxLayout
 |||------------| |---------------------startEnd: QFormLayout
@@ -196,15 +246,13 @@ class UISpritesheetManager(object):
 ||| columns <> | | end <>
 |||------------| |-----------------------startEnd--
 ||------------------------------------spinBoxes--
-|(space)
 | line -----------
 |(space)
 ||-------------------------------------checkboxes: QFormLayout
-|| overwrite[/] remove tmp folder [/]
+|| remove tmp folder[/] overwrite [/]
 ||-----------------------------------------checkboxes--
 |(space)
 | line -----------
-|(space)
 | Ok    Cancel
 |--------------------------------------------outer layout--
 
