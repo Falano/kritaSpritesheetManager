@@ -1,11 +1,10 @@
 import sys # seems to be used in activating the script; check later
-from krita import * #(Extension, krita, InfoObject)
+from krita import (krita, InfoObject)
 import importlib
 from glob import glob # to get files in a directory
 from math import sqrt, ceil, floor
 from . import uispritesheetmanager # manages the dialog that lets you set user preferences before applying the script
 from pathlib import Path #for path operations # who'd have guessed
-from shutil import rmtree
 
 from PyQt5.QtWidgets import QWidget, QLabel, QMessageBox # for debug messages
 
@@ -18,16 +17,14 @@ class SpritesheetManager(object):
         # exporter
         self.exportName = "Spritesheet"
         self.exportDir = Path.home() #remember this is a Path, not a string, and as such you can't do string operations on it (unless you convert it first)
+        self.spritesExportDir = "" # this is a Path too. Trust me.
         self.rows = 0
         self.columns = 0
         self.start = 0
         self.end = 0
-        self.overwrite = False # for now I'm not using it as it could lead to accidentally deleting a folder where the user has important stuff
-        # to use it I would need to remove all tmp files (if self.overwrite is true) instead of the tmp folder
+        self.overwrite = False
         self.removeTmp = True
         self.step = 1
-#        if platform.system() == 'Windows':
-#            separator = "\\"
 
     # exporter:
     # export all frames of the animation in a temporary folder as png
@@ -37,24 +34,32 @@ class SpritesheetManager(object):
     # remove tmp folder if needed
     def export(self, debugging = False):
 
-        # create a temporary export directory for the individual sprites
-        tmpFolder = self.exportName + "_sprites" # to be removed when finished # if the user wishes
-        tmpName = self.exportName + "_"
-        if not self.overwrite:
+        addedFolder = False
+        # create a temporary export directory for the individual sprites if the user didn't set any
+        if self.spritesExportDir == "":
+            self.spritesExportDir = self.exportDir.joinpath(self.exportName + "_sprites")
+       
+       
+        if not self.overwrite and self.spritesExportDir.exists():
             exportNum = 0
         
-        # in case the user has a folder with the exact same name as my temporary one
-            while ((self.exportDir.joinpath(tmpFolder + str(exportNum))).exists()):
-                exportNum+=1
+            parentPath = self.spritesExportDir.parent
+            folder = str(self.spritesExportDir.parts[len(self.spritesExportDir.parts) -1])
+        
+            # in case the user has a folder with the exact same name as my temporary one
+            while (parentPath.joinpath(folder + str(exportNum)).exists()):
+                exportNum += 1
+            
+            self.spritesExportDir = parentPath.joinpath(folder + str(exportNum))
+            # if overwrite, spritesExportDir's value is taken from the user-set choices in the dialog
     
-            tmpFolder += str(exportNum)
-    
-        # if not self.overwrite, tmpFolder cannot already exist and this will always be called
-        if not (self.exportDir.joinpath(tmpFolder)).exists():
-            (self.exportDir.joinpath(tmpFolder)).mkdir()
+        # this will always be called if not overwrite because it will always create a new export folder
+        if not (self.spritesExportDir).exists():
+            addedFolder = True
+            (self.spritesExportDir).mkdir()
     
 
-        # render animation in a tmp folder
+        # render animation in the sprites export folder
         doc = Krita.instance().activeDocument()
 
         # check self.end value and if needed input default value
@@ -67,12 +72,12 @@ class SpritesheetManager(object):
         doc.setCurrentTime(self.start)
         if(debugging):
             print("animation Length: " + str(doc.animationLength()) + "; full clip self.start: " + str(doc.fullClipRangeStartTime()) + "; full clip self.end: " + str(doc.fullClipRangeEndTime()) + "; playback self.start time: " + doc.playbackStartTime() + "; playback self.end time: " + playbackEndTime())
-        framesNum = (self.end - self.start)/self.step
-        # it would be better to have the default value be from first to last effective frame instead of asking the user to correctly set the Start and End anim values each time, but as of now krita can't it seems
+        framesNum = ((self.end + 1) - self.start)/self.step
+        # it would be better to have the default value be from first to last effective frame instead of asking the user to correctly set the Start and End anim values each time, but as of now krita can't I think
         doc.setBatchmode(True) # so it won't show the export dialog window    
-        tmpNum = 0
+        tmpNum = self.start
         while(doc.currentTime() <= self.end):
-            doc.exportImage(str(self.exportDir.joinpath(tmpFolder, tmpName + str(tmpNum).zfill(3) + ".png")), InfoObject())
+            doc.exportImage(str(self.spritesExportDir.joinpath(self.exportName + "_" + str(tmpNum).zfill(3) + ".png")), InfoObject())
             doc.setCurrentTime(doc.currentTime() + self.step)
             tmpNum += self.step
     
@@ -119,25 +124,25 @@ class SpritesheetManager(object):
             print("num of frames: " + str(framesNum))
             print("new doc width: " + str(sheet.width()))
     
-    
+
+        # for debugging when the result of print() is not available
+        #        QMessageBox.information(QWidget(), i18n("Debug 130"), i18n("step: " + str(self.step) + "; end: " + str(self.end) + "; start: " + str(self.start) + "; rows: " + str(self.rows) + "; columns: " + str(self.columns)) + "; frames number: " + str(framesNum))
+
+
         # adding our sprites to the new document
         # and moving them to the right position
-        if (debugging):
-            print("tmp folder name: " + tmpFolder + ".png")
-
-# for debugging when the result of print() is not available
-#        QMessageBox.information(QWidget(), i18n("Debug 130"), i18n("step: " + str(self.step) + "; end: " + str(self.end) + "; start: " + str(self.start) + "; rows: " + str(self.rows) + "; columns: " + str(self.columns)) + "; frames number: " + str(framesNum))
-            
-            
         imgNum = self.start
         root_node = sheet.rootNode()
         while (imgNum <= self.end):
-            img = str(self.exportDir.joinpath(tmpFolder, tmpName + str(imgNum).zfill(3) + ".png"))
+            img = str(self.spritesExportDir.joinpath(self.exportName + "_" + str(imgNum).zfill(3) + ".png"))
             layer = sheet.createFileLayer(img, img, "ImageToSize")
             root_node.addChildNode(layer, None)
             layer.move((((imgNum-self.start)/self.step) % (self.columns)) * width, (int(((imgNum-self.start)/self.step)/self.columns)) * height)
             # I need to merge down each layer or they don't show
             layer.mergeDown()
+            if self.removeTmp:
+                # removing temporary sprites exports
+                Path(img).unlink()
             if (debugging):
                 print("image " + str(imgNum-self.start) + " name: " + img + " at pos:")
                 print(layer.position())
@@ -151,9 +156,7 @@ class SpritesheetManager(object):
 
         sheet.exportImage(str(self.exportDir.joinpath(self.exportName)) + ".png", InfoObject())
         
-        # and remove the tmp stuff when you're done
-        if debugging:
-            print("removing tmp folder " + str(self.exportDir.joinpath(tmpFolder)))
-    
+        # and remove the empty tmp folder when you're done
         if self.removeTmp:
-            rmtree(str(self.exportDir.joinpath(tmpFolder)))
+            if addedFolder:
+                self.spritesExportDir.rmdir()

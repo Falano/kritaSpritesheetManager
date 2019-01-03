@@ -49,6 +49,15 @@ class UISpritesheetManager(object):
         self.exportDirButt.clicked.connect(self.changeExportDir)
         self.exportDirResetButt.clicked.connect(self.resetExportDir)
         self.exportDir = QHBoxLayout()
+        
+        # and the sprites export directory
+        self.spritesExportDirWidget = QWidget()
+        self.spritesExportDirTx = QLineEdit()
+        self.spritesExportDirButt = QPushButton("Change sprites directory")
+        self.spritesExportDirButt.clicked.connect(self.changeSpritesExportDir)
+        self.spritesExportDirTx.setToolTip("Leave empty for default")
+        self.spritesExportDir = QHBoxLayout(self.spritesExportDirWidget)
+        
         self.defaultRowsColumnsInfo = QLabel("Leave at 0 to get the default value:")
 
         self.spinBoxes = QHBoxLayout() # a box holding the boxes with rows columns and start end
@@ -67,6 +76,8 @@ class UISpritesheetManager(object):
         self.step.setValue(1)
 
         # to be placed outside of spinBoxes, still in outerLayout
+        self.hiddenCheckbox = QWidget()
+        self.hiddenCheckboxLayout = QVBoxLayout(self.hiddenCheckbox)
         self.line = QFrame()
         self.line.setFrameShape(QFrame.HLine)
         self.line.setFrameShadow(QFrame.Sunken)
@@ -176,24 +187,42 @@ class UISpritesheetManager(object):
         widget = self.removeTmp, 
         tooltip = "Once the spritesheet export is done, \nwhether to remove the individual exported sprites")])
         
-        #self.overwriteLayout = self.addDescribedWidget(parent = self.checkBoxes, listWidgets = [
-        #describedWidget(
-        #descri = "Overwrite existant?", 
-        #widget = self.overwrite, 
-        #tooltip = "If there is already a folder with the same name as the individual sprites export folder, \nwhether to create a new one (unchecked) or write the sprites in the existing folder, \npossibly overwriting other files (checked)")])
+        self.overwriteLayout = self.addDescribedWidget(parent = self.hiddenCheckboxLayout, listWidgets = [
+        describedWidget(
+        descri = "Overwrite existant?", 
+        widget = self.overwrite, 
+        tooltip = "If there is already a folder with the same name as the individual sprites export folder, \nwhether to create a new one (unchecked) or write the sprites in the existing folder, \npossibly overwriting other files (checked)")])
         
         self.outerLayout.addWidget(self.line2)
         self.outerLayout.addItem(self.spacer)
         
-        # just a test, then it'll have to change dynamically
+        
+        self.addDescribedWidget(parent = self.spritesExportDir, listWidgets = [
+        describedWidget(
+        widget = self.spritesExportDirTx, 
+        descri = "Sprites export directory:", 
+        tooltip = "The directory the individual sprites will be exported to")])
+        self.spritesExportDir.addWidget(self.spritesExportDirButt)
+        
+        # have removeTmp toggle overwrite's and sprites export dir's visibility
+        self.checkBoxes.addWidget(self.hiddenCheckbox)
         self.outerLayout.addLayout(self.checkBoxes)
-        # ask for the sprites export folder name here
+        self.outerLayout.addWidget(self.spritesExportDirWidget)
+        self.removeTmp.clicked.connect(self.toggleHiddenParams)
 
         self.outerLayout.addItem(self.spacer)
         self.outerLayout.addWidget(self.line)
 
         self.outerLayout.addWidget(self.OkCancelButtonBox)
+        
+        self.toggleHiddenParams()
 
+    def toggleHiddenParams(self):
+        if self.removeTmp.isChecked():
+            self.overwrite.setChecked(False)
+            self.spritesExportDirTx.setText("")
+        self.hiddenCheckbox.setDisabled(self.removeTmp.isChecked())
+        self.spritesExportDirWidget.setDisabled(self.removeTmp.isChecked())
 
     def showExportDialog(self):
         self.doc = self.app.activeDocument()
@@ -220,17 +249,30 @@ class UISpritesheetManager(object):
             self.exportPath = Path(self.doc.fileName()).parents[0]
             self.exportDirTx.setText(str(self.exportPath))
 
+    def changeSpritesExportDir(self):
+        self.SpritesExportDirDialog = QFileDialog()
+        self.SpritesExportDirDialog.setWindowTitle(i18n("Choose Sprites Export Directory"))
+        self.SpritesExportDirDialog.setSizeGripEnabled(True)
+        self.SpritesExportDirDialog.setDirectory(str(self.exportPath))
+        # we grab the output path on directory changed
+        self.spritesExportPath = self.SpritesExportDirDialog.getExistingDirectory()
+        if self.spritesExportPath != "":
+            self.spritesExportDirTx.setText(str(self.spritesExportPath))
 
     def confirmButton(self):
         self.man.exportName = self.exportName.text().split('.')[0]
+        self.man.exportDir = Path(self.exportPath)
         self.man.rows = self.rows.value()
         self.man.columns = self.columns.value()
         self.man.start = self.start.value()
         self.man.end = self.end.value()
         self.man.step = self.step.value()
-        #self.man.overwrite = self.overwrite.isChecked()
         self.man.removeTmp = self.removeTmp.isChecked()
-        self.man.exportDir = Path(self.exportPath)
+        self.man.overwrite = self.overwrite.isChecked()
+        if self.spritesExportDirTx.text() != "":
+            self.man.spritesExportDir = Path(self.spritesExportDirTx.text())
+        else:
+            self.man.spritesExportDir = "" # important to reset spritemanager's spritesExportDir
         self.man.export()
 
 """
