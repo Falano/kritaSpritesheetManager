@@ -1,6 +1,6 @@
 """
 UI of the spritesheet manager user choices dialog
-drawing at the end of file
+drawing of the structure of the dialog at the end of file
 
 """
 
@@ -241,14 +241,14 @@ class UISpritesheetManager(object):
 |(space)
 | 0 as default info
 ||-------------------------------spinBoxes: HBoxLayout
-|||------------| |---------------------startEnd: QFormLayout
+|||------------| |---------------------unnamed QGridLayout
 ||| rows <>    | | start <>
 ||| columns <> | | end <>
-|||------------| |-----------------------startEnd--
+|||------------| |-----------------------unnamed QGridLayout--
 ||------------------------------------spinBoxes--
 | line -----------
 |(space)
-||-------------------------------------checkboxes: QFormLayout
+||-------------------------------------checkboxes: QHBoxLayout
 || remove tmp folder[/] overwrite [/]
 ||-----------------------------------------checkboxes--
 |(space)
