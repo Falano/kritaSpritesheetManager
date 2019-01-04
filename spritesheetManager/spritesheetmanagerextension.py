@@ -28,8 +28,8 @@ class spritesheetManagerExtension(Extension):
     def createActions (self, window):
         # how do I make sub-menus?
         exportSs = window.createAction("pykrita_spritesheetExporter", "Export As Spritesheet", "tools/scripts/spritesheetmanager")
-        importSs = window.createAction("pykrita_spritesheetImporter", "Import A Spritesheet", "tools/scripts/spritesheetmanager")
-        mergeSs = window.createAction("pykrita_spritesheetMerger", "Merge Spritesheets", "tools/scripts/spritesheetmanager")
+        #importSs = window.createAction("pykrita_spritesheetImporter", "Import A Spritesheet", "tools/scripts/spritesheetmanager")
+        #mergeSs = window.createAction("pykrita_spritesheetMerger", "Merge Spritesheets", "tools/scripts/spritesheetmanager")
         # parameter 1 =  the name that Krita uses to identify the action # where is it used though? For key shortcuts?
         # parameter 2 = this script's menu entry name
         # parameter 3 = location of menu entry

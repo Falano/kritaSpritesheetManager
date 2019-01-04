@@ -1,7 +1,6 @@
 import sys # seems to be used in activating the script; check later
 from krita import (krita, InfoObject)
 import importlib
-from glob import glob # to get files in a directory
 from math import sqrt, ceil, floor
 from . import uispritesheetmanager # manages the dialog that lets you set user preferences before applying the script
 from pathlib import Path #for path operations # who'd have guessed
