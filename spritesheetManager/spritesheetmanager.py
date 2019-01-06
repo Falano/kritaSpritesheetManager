@@ -17,6 +17,7 @@ class SpritesheetManager(object):
         self.exportName = "Spritesheet"
         self.exportDir = Path.home() #remember this is a Path, not a string, and as such you can't do string operations on it (unless you convert it first)
         self.spritesExportDir = "" # this is a Path too. Trust me.
+        self.isDirectionHorizontal = True
         self.rows = 0
         self.columns = 0
         self.start = 0
@@ -24,6 +25,13 @@ class SpritesheetManager(object):
         self.overwrite = False
         self.removeTmp = True
         self.step = 1
+
+    def positionLayer(self, layer, imgNum, width, height):
+        if self.isDirectionHorizontal:
+            layer.move((imgNum % self.columns) * width, (int(imgNum/self.columns)) * height)
+        else:
+            layer.move(int(imgNum / self.rows) * width, (imgNum % self.rows) * height)
+            
 
     # exporter:
     # export all frames of the animation in a temporary folder as png
@@ -132,11 +140,12 @@ class SpritesheetManager(object):
         # and moving them to the right position
         imgNum = self.start
         root_node = sheet.rootNode()
+        
         while (imgNum <= self.end):
             img = str(self.spritesExportDir.joinpath(self.exportName + "_" + str(imgNum).zfill(3) + ".png"))
             layer = sheet.createFileLayer(img, img, "ImageToSize")
             root_node.addChildNode(layer, None)
-            layer.move((((imgNum-self.start)/self.step) % (self.columns)) * width, (int(((imgNum-self.start)/self.step)/self.columns)) * height)
+            self.positionLayer(layer=layer, imgNum=((imgNum-self.start)/self.step), width=width, height=height)
             # I need to merge down each layer or they don't show
             layer.mergeDown()
             if self.removeTmp:

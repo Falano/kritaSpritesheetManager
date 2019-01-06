@@ -58,6 +58,16 @@ class UISpritesheetManager(object):
         self.spritesExportDirTx.setToolTip("Leave empty for default")
         self.spritesExportDir = QHBoxLayout(self.spritesExportDirWidget)
         
+        # we want to let the user choose if they want the final spritesheet to be horizontally- or vertically-oriented
+        # there is a nifty thing called QButtonGroup() but it doesn't seem to let you add names between each checkbox somehow?
+        self.horDir = QCheckBox()
+        self.horDir.setChecked(True)
+        self.vertDir = QCheckBox()
+        self.vertDir.setChecked(False)
+        self.vertDir.stateChanged.connect(self.exclusiveVertToHor)
+        self.horDir.stateChanged.connect(self.exclusiveHorToVert)
+        self.direction = QHBoxLayout()
+        
         self.defaultRowsColumnsInfo = QLabel("Leave at 0 to get the default value:")
 
         self.spinBoxes = QHBoxLayout() # a box holding the boxes with rows columns and start end
@@ -125,9 +135,6 @@ class UISpritesheetManager(object):
         return layout
 
 
-
-
-
     def initialize_export(self):
 
         # putting stuff in boxes
@@ -147,7 +154,23 @@ class UISpritesheetManager(object):
         self.exportDir.addWidget(self.exportDirResetButt)
         self.outerLayout.addLayout(self.exportDir)
 
+        self.outerLayout.addItem(self.spacer)
 
+        self.direction.addWidget(QLabel("sprites placement direction: \t"))
+        self.addDescribedWidget(parent = self.direction, listWidgets = [
+        describedWidget(
+        widget = self.horDir,
+        descri = "Horizontal:",
+        tooltip = "like so: \n1, 2, 3 \n4, 5, 6 \n7, 8, 9")])
+        
+        self.addDescribedWidget(parent = self.direction, listWidgets = [
+        describedWidget(
+        widget = self.vertDir,
+        descri = "Vertical:",
+        tooltip = "like so: \n1, 4, 7 \n2, 5, 8 \n3, 6, 9")])
+        
+        self.outerLayout.addLayout(self.direction)
+        
         self.outerLayout.addItem(self.spacerBig)
 
 
@@ -217,6 +240,16 @@ class UISpritesheetManager(object):
         
         self.toggleHiddenParams()
 
+    def exclusiveVertToHor(self):
+        self.exclusiveCheckBoxUpdate(trigger = self.vertDir, triggered = self.horDir)
+
+    def exclusiveHorToVert(self):
+        self.exclusiveCheckBoxUpdate(trigger = self.horDir, triggered = self.vertDir)
+        
+    def exclusiveCheckBoxUpdate(self, trigger, triggered):
+        if triggered.isChecked() == trigger.isChecked():
+            triggered.setChecked(not trigger.isChecked())
+
     def toggleHiddenParams(self):
         if self.removeTmp.isChecked():
             self.overwrite.setChecked(False)
@@ -262,6 +295,7 @@ class UISpritesheetManager(object):
     def confirmButton(self):
         self.man.exportName = self.exportName.text().split('.')[0]
         self.man.exportDir = Path(self.exportPath)
+        self.man.isDirectionHorizontal = self.horDir.isChecked()
         self.man.rows = self.rows.value()
         self.man.columns = self.columns.value()
         self.man.start = self.start.value()
@@ -280,6 +314,12 @@ class UISpritesheetManager(object):
 |----------------------------outer layout: VBoxLayout
 | export name
 | export directory [    ]
+|(space)
+||--------------------------------direction: HBoxLayout
+|||-----------------------unnamed QGridLayout
+|||horizontal: [/] vertical: [/]
+|||-----------------------unnamedQHridLayout--
+||-----------------------------------------direction--
 |(space)
 | 0 as default info
 ||-------------------------------spinBoxes: HBoxLayout
