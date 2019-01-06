@@ -1,6 +1,6 @@
 # kritaSpritesheetManager
 
-krita plugin using the Krita python script manager; **requires Krita 4.2.* ** or later (currently using the 4.2.0 pre-alpha version, git 325cbf6)
+krita plugin using the Krita python script manager; **requires Krita 4.2.x** or later (currently using the 4.2.0 pre-alpha version, git 325cbf6)
 
 Manages spritesheets; once finished, should contain scripts that:
 - **export to a spritesheet** from the animation timeline (using all visible layers) (the spritesheet's number of rows and columns are user-defined; default would be best fit (trying to form a square) or one row, still to be decided)
