@@ -1,19 +1,14 @@
 """
 spritesheet exporter from animation timeline
 (all visible layers)
-spritesheet importer to animation if I have time
-maybe also merge several one-line spritesheets? Or any already-exported images really
 
 """
 
-import sys # seems to be used in activating the script; check later
 from krita import (Extension, krita)
-import importlib
-from . import uispritesheetmanager # manages the dialog that lets you set user preferences before applying the script
-from pathlib import Path #for path operations # who'd have guessed
+from . import uispritesheetexporter # manages the dialog that lets you set user preferences before applying the script
 
 
-class spritesheetManagerExtension(Extension):
+class spritesheetExporterExtension(Extension):
 
     # Always initialise the superclass, This is necessary to create the underlying C++ object
     def __init__(self, parent):
@@ -26,10 +21,7 @@ class spritesheetManagerExtension(Extension):
     # menu stuff
     # don't forget to activate the script in krita's preferences or it won't show 
     def createActions (self, window):
-        # how do I make sub-menus?
-        exportSs = window.createAction("pykrita_spritesheetExporter", "Export As Spritesheet", "tools/scripts/spritesheetmanager")
-        #importSs = window.createAction("pykrita_spritesheetImporter", "Import A Spritesheet", "tools/scripts/spritesheetmanager")
-        #mergeSs = window.createAction("pykrita_spritesheetMerger", "Merge Spritesheets", "tools/scripts/spritesheetmanager")
+        exportSs = window.createAction("pykrita_spritesheetExporter", "Export As Spritesheet", "tools/scripts")
         # parameter 1 =  the name that Krita uses to identify the action # where is it used though? For key shortcuts?
         # parameter 2 = this script's menu entry name
         # parameter 3 = location of menu entry
@@ -37,12 +29,12 @@ class spritesheetManagerExtension(Extension):
         exportSs.setToolTip("Export animation in timeline as spritesheet") # doesn't show tooltip on mouse hover. Why?
 
         # when you click on the script in the menu it opens the dialog window
-        self.ui = uispritesheetmanager.UISpritesheetManager()
+        self.ui = uispritesheetexporter.UISpritesheetExporter()
         exportSs.triggered.connect(self.ui.showExportDialog) 
         
   
-    # actual stuff-doing in the spritesheetmanager.py script 
+    # the actual stuff-doing is in the spritesheetexporter.py script 
 
 app = Krita.instance();
 # windows and menu stuff
-Scripter.addExtension(spritesheetManagerExtension(app))
+Scripter.addExtension(spritesheetExporterExtension(app))

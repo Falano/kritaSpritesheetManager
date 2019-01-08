@@ -3,32 +3,26 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <!--BBD's Krita Script Starter, Feb 2018 -->
-<head><title>Spritesheet manager</title>
+<head><title>Spritesheet exporter</title>
 </head>
 <body>
-<h3>Spritesheet manager: exports and merges spritesheets</h3>
+<h3>Spritesheet exporter: exports as spritesheets</h3>
 
 <br>
 <h3>Why use it</h3>
 <p>
-Most pixel art games use spritesheets for their animations, but manually exporting from the animation timeline is a pain, effectively destroys your animation if you do it on the same file, and with every new modification you need to start all over again.
-</p>
-
-<p>
-This plugin is twofold: <br>
-- <b>export</b>: it allows you to easily export the active animation as a spritesheet.<br>
-- <b>merge</b> (to do): in case you have several animations on different layers, or just want to make a spritesheet from previously-exported images, it lets you merge external image files afterwards, without needing to necessarily import them into krita. (todo)<br>
-PS: to <b>import spritesheets</b>, use the built-in tools and simply (with your spritesheet open) go to Image > Image Split then (in a new file of the same dimensions as one frame), File > Import Animation Frames<br>
+Most pixel art games use spritesheets for their animations, but manually exporting from the animation timeline is a pain, effectively destroys your animation if you do it on the same file, and with every new modification you need to start all over again.<br>
+This plugin allows you to easily export the active animation as a spritesheet without modifying your current working document.
 </p>
 
 <br>
 <h3>How to use it</h3>
-<h4>Exporting a single animation</h4>
 <p>
-<b>Tools > Scripts > SpritesheetManager > Export Spritesheet</b> will export the animation from the currently selected document's animation timeline.<br>
+<b>Tools > Scripts > Export As Spritesheet </b>will export the animation from the currently selected document's animation timeline.<br>
+</p>
 <br>
-<b>Options:</b><br>
-<b>export name</b>: if you type in "exportName", the name of the individual exported frames will be exportName_000.png, exportName_001.png, etc., and the spritesheet will be called exportName.png . If your name contains a comma, anything after the first comma will be ignored, and the file will still export as a png.<br>
+<h3>Options</h3>
+<p><b>export name</b>: if you type in "exportName", the name of the individual exported frames will be exportName_000.png, exportName_001.png, etc., and the spritesheet will be called exportName.png . If your name contains a comma, anything after the first comma will be ignored, and the file will still export as a png (for example, "exportName", "exportName.png", "exportName.pdf", "exportName.v12.final.finalfinal.xcf" will all export to the same name, see example just above).<br>
 <b>export directory</b>: select the folder in which the spritesheet will be exported (the frames will be exported in a subfolder of the export directory called exportName_sprites)<br>
 <b>change export directory</b>: Opens a file explorer to select the Export Directory<br>
 <b>reset to current directory</b>: Resets the export directory to the directory containing the currently active .kra document<br>
@@ -49,13 +43,15 @@ If end is set to 0, it will use the default value for both (that is, the Start/E
 </p>
 
 <br>
-<h4>Merging exported sprites into a spritesheet</h4>
-TODO
+<h3>Other spritesheet manipulations</h3>
+<p>
+If you want to <b>import spritesheets</b>, just use the built-in tools and simply (with your spritesheet open) go to Image > Image Split then (in a new file of the same dimensions as one frame), File > Import Animation Frames (<a href ="https://docs.krita.org/en/user_manual/animation.html">official tuto with images here,</a> at the end of page)<br>
+If you want to <b>merge existing spritesheets</b>, open the biggest one to get a document its size, then remove or hide it so your document is empty, then import each spritesheet on a different frame (File > Import Animation Frames) and export them as a spritesheet (Tools > Scripts > Export As Spritesheet); you probably want 1 column and 0 (default) rows if your individual spritesheets are each one line<br>
+</p>
+
 
 <br>
 <h3>Notes</h3>
-<p> Sometimes Export As Spritesheet bugs and exports an empty image. Just try again and it'll work.</p>
-<p> You can't export as anything other than .png because jpg is the ugliest thing ever with pixel art. If someone finds it useful to have actual export options and doesn't want to do it themselves tell me and I'll think about it</p>
 <p>If you have comments, suggestions, or need to contact me, send me an email at: noemie.scherer@gmail.com</p>
 
 </body>

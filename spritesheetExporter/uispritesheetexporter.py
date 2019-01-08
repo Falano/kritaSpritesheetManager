@@ -1,5 +1,5 @@
 """
-UI of the spritesheet manager user choices dialog
+UI of the spritesheet exporter user choices dialog
 drawing of the structure of the dialog at the end of file
 
 """
@@ -12,9 +12,8 @@ from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QFrame, QPushButton,
                              QLineEdit, QWidget, QCheckBox, QDialogButtonBox,
                              QSpacerItem)
 import krita
-import importlib
-from pathlib import Path # to have paths works whether it's windows or unix
-from . import spritesheetmanager
+from pathlib import Path # to have paths work whether it's windows or unix
+from . import spritesheetexporter
 
         
 class describedWidget:
@@ -24,14 +23,14 @@ class describedWidget:
         self.tooltip = tooltip
 
 
-class UISpritesheetManager(object):
+class UISpritesheetExporter(object):
 
 
     def __init__(self):
         # here we don't need super().__init__(parent)
         # maybe it's only for who inherits extensions?
         self.app = krita.Krita.instance()
-        self.man = spritesheetmanager.SpritesheetManager()
+        self.exp = spritesheetexporter.SpritesheetExporter()
 
         self.mainDialog = QDialog(self.app.activeWindow().qwindow()) #the main window
         self.mainDialog.setWindowModality(Qt.NonModal) #The window is not modal and does not block input to other windows.
@@ -138,7 +137,8 @@ class UISpritesheetManager(object):
     def initialize_export(self):
 
         # putting stuff in boxes
-        self.exportName.setText(self.man.exportName)
+        # and boxes in bigger boxes
+        self.exportName.setText(self.exp.exportName)
         self.addDescribedWidget(parent = self.outerLayout, listWidgets = [
         describedWidget(
         widget = self.exportName, 
@@ -201,7 +201,6 @@ class UISpritesheetManager(object):
         tooltip = "only consider every 'step' frame to be added to the spritesheet; \ndefault is 1 (use every frame)")])
 
 
-        # and boxes in bigger boxes
         self.outerLayout.addLayout(self.spinBoxes)
 
         self.addDescribedWidget(parent = self.checkBoxes, listWidgets = [
@@ -265,6 +264,7 @@ class UISpritesheetManager(object):
         self.mainDialog.setSizeGripEnabled(True)
         self.mainDialog.show()
         self.mainDialog.activateWindow()
+        self.mainDialog.setDisabled(False)
 
     def changeExportDir(self):
         self.exportDirDialog = QFileDialog()
@@ -293,21 +293,24 @@ class UISpritesheetManager(object):
             self.spritesExportDirTx.setText(str(self.spritesExportPath))
 
     def confirmButton(self):
-        self.man.exportName = self.exportName.text().split('.')[0]
-        self.man.exportDir = Path(self.exportPath)
-        self.man.isDirectionHorizontal = self.horDir.isChecked()
-        self.man.rows = self.rows.value()
-        self.man.columns = self.columns.value()
-        self.man.start = self.start.value()
-        self.man.end = self.end.value()
-        self.man.step = self.step.value()
-        self.man.removeTmp = self.removeTmp.isChecked()
-        self.man.overwrite = self.overwrite.isChecked()
+        self.mainDialog.setDisabled(True) # so if you double click it doesn't interrupt the first run of the function with a new one
+        self.exp.exportName = self.exportName.text().split('.')[0]
+        self.exp.exportDir = Path(self.exportPath)
+        self.exp.isDirectionHorizontal = self.horDir.isChecked()
+        self.exp.rows = self.rows.value()
+        self.exp.columns = self.columns.value()
+        self.exp.start = self.start.value()
+        self.exp.end = self.end.value()
+        self.exp.step = self.step.value()
+        self.exp.removeTmp = self.removeTmp.isChecked()
+        self.exp.overwrite = self.overwrite.isChecked()
         if self.spritesExportDirTx.text() != "":
-            self.man.spritesExportDir = Path(self.spritesExportDirTx.text())
+            self.exp.spritesExportDir = Path(self.spritesExportDirTx.text())
         else:
-            self.man.spritesExportDir = "" # important to reset spritemanager's spritesExportDir
-        self.man.export()
+            self.exp.spritesExportDir = "" # important: to reset spritesheetexporter's spritesExportDir
+        self.exp.export()
+        self.mainDialog.hide()
+
 
 """
 

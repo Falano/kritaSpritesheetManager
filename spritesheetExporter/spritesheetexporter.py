@@ -1,19 +1,15 @@
-import sys # seems to be used in activating the script; check later
 from krita import (krita, InfoObject)
-import importlib
 from math import sqrt, ceil, floor
-from . import uispritesheetmanager # manages the dialog that lets you set user preferences before applying the script
+from . import uispritesheetexporter # manages the dialog that lets you set user preferences before applying the script
 from pathlib import Path #for path operations # who'd have guessed
 
 from PyQt5.QtWidgets import QWidget, QLabel, QMessageBox # for debug messages
 
 
-class SpritesheetManager(object):
+class SpritesheetExporter(object):
 
     def __init__(self):
         # user-defined variables
-        # currently, placeholders    
-        # exporter
         self.exportName = "Spritesheet"
         self.exportDir = Path.home() #remember this is a Path, not a string, and as such you can't do string operations on it (unless you convert it first)
         self.spritesExportDir = "" # this is a Path too. Trust me.
@@ -33,7 +29,6 @@ class SpritesheetManager(object):
             layer.move(int(imgNum / self.rows) * width, (imgNum % self.rows) * height)
             
 
-    # exporter:
     # export all frames of the animation in a temporary folder as png
     # create a new document of the right dimensions according to self.rows and self.columns
     # position each exported frame in the new doc according to its name

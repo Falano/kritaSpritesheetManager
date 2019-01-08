@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Service
-ServiceTypes=Krita/PythonPlugin
-X-KDE-Library=spritesheetManager
-X-Python-2-Compatible=false
-X-Krita-Manual=Manual.html
-Name=Spritesheet Manager
-Comment=Export, import and merge of spritesheets from the animation timeline
