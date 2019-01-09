@@ -46,7 +46,7 @@ class SpritesheetExporter(object):
             exportNum = 0
 
             parentPath = self.spritesExportDir.parent
-            folder = str(self.spritesExportDir.parts[len(self.spritesExportDir.parts) -1])
+            folder = str(self.spritesExportDir.parts[-1])
 
             # in case the user has a folder with the exact same name as my temporary one
             while (parentPath.joinpath(folder + str(exportNum)).exists()):
