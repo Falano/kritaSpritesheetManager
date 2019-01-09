@@ -17,9 +17,9 @@ class spritesheetExporterExtension(Extension):
 # this too is necessary, because "Extension.setup() is abstract and must be overridden" and we inherit from Extension
     def setup(self):
         pass
-    
+
     # menu stuff
-    # don't forget to activate the script in krita's preferences or it won't show 
+    # don't forget to activate the script in krita's preferences or it won't show
     def createActions (self, window):
         exportSs = window.createAction("pykrita_spritesheetExporter", "Export As Spritesheet", "tools/scripts")
         # parameter 1 =  the name that Krita uses to identify the action # where is it used though? For key shortcuts?
@@ -30,10 +30,10 @@ class spritesheetExporterExtension(Extension):
 
         # when you click on the script in the menu it opens the dialog window
         self.ui = uispritesheetexporter.UISpritesheetExporter()
-        exportSs.triggered.connect(self.ui.showExportDialog) 
-        
-  
-    # the actual stuff-doing is in the spritesheetexporter.py script 
+        exportSs.triggered.connect(self.ui.showExportDialog)
+
+
+    # the actual stuff-doing is in the spritesheetexporter.py script
 
 app = Krita.instance();
 # windows and menu stuff

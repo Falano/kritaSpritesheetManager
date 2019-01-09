@@ -7,14 +7,14 @@ UI of the spritesheet exporter user choices dialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QFrame, QPushButton,
                              QVBoxLayout, QHBoxLayout, QFileDialog, QLabel,
-                             QPushButton, QInputDialog, QSpinBox, QDialog, 
+                             QPushButton, QInputDialog, QSpinBox, QDialog,
                              QLineEdit, QWidget, QCheckBox, QDialogButtonBox,
                              QSpacerItem, QSizePolicy)
 import krita
 from pathlib import Path # to have paths work whether it's windows or unix
 from . import spritesheetexporter
 
-        
+
 class describedWidget:
     def __init__ (self, widget, descri, tooltip = ""):
         self.widget = widget
@@ -34,9 +34,9 @@ class UISpritesheetExporter(object):
         self.mainDialog = QDialog(self.app.activeWindow().qwindow()) #the main window
         self.mainDialog.setWindowModality(Qt.NonModal) #The window is not modal and does not block input to other windows.
         self.mainDialog.setMinimumSize(500, 100)
-        
+
         self.outerLayout = QVBoxLayout(self.mainDialog) # the box holding everything
-        
+
         self.topLayout = QVBoxLayout()
 
         # the user should choose the export name of the final spritesheet
@@ -50,7 +50,7 @@ class UISpritesheetExporter(object):
         self.exportDirButt.clicked.connect(self.changeExportDir)
         self.exportDirResetButt.clicked.connect(self.resetExportDir)
         self.exportDir = QHBoxLayout()
-        
+
         # and the sprites export directory
         self.spritesExportDirWidget = QWidget()
         self.spritesExportDirTx = QLineEdit()
@@ -58,16 +58,16 @@ class UISpritesheetExporter(object):
         self.spritesExportDirButt.clicked.connect(self.changeSpritesExportDir)
         self.spritesExportDirTx.setToolTip("Leave empty for default")
         self.spritesExportDir = QHBoxLayout(self.spritesExportDirWidget)
-        
+
         self.customSettings = QCheckBox()
         self.customSettings.setChecked(False)
         self.customSettings.stateChanged.connect(self.toggleHideable)
-        
+
         self.hideableWidget = QFrame() # QFrames are a type of widget
         self.hideableWidget.setFrameShape(QFrame.Panel)
         self.hideableWidget.setFrameShadow(QFrame.Sunken)
         self.hideableLayout = QVBoxLayout(self.hideableWidget)
-        
+
         # we want to let the user choose if they want the final spritesheet to be horizontally- or vertically-oriented
         # there is a nifty thing called QButtonGroup() but it doesn't seem to let you add names between each checkbox somehow?
         self.horDir = QCheckBox()
@@ -116,7 +116,7 @@ class UISpritesheetExporter(object):
         self.OkCancelButtonBox.rejected.connect(self.mainDialog.close)
 
         self.space = 10
-        
+
         self.spacer = QSpacerItem(self.space, self.space)
         self.spacerBig = QSpacerItem(self.space*2, self.space*2)
 
@@ -153,15 +153,15 @@ class UISpritesheetExporter(object):
         self.exportName.setText(self.exp.exportName)
         self.addDescribedWidget(parent = self.topLayout, listWidgets = [
         describedWidget(
-        widget = self.exportName, 
-        descri = "Export name:", 
+        widget = self.exportName,
+        descri = "Export name:",
         tooltip = "The name of the exported spritesheet file")])
         self.addDescribedWidget(parent = self.topLayout, listWidgets = [
         describedWidget(
-        widget = self.exportDirTx, 
-        descri = "Export Directory:", 
+        widget = self.exportDirTx,
+        descri = "Export Directory:",
         tooltip = "The directory the spritesheet will be exported to")])
-        
+
         self.exportDir.addWidget(self.exportDirButt)
         self.exportDir.addWidget(self.exportDirResetButt)
         self.topLayout.addLayout(self.exportDir)
@@ -173,9 +173,9 @@ class UISpritesheetExporter(object):
         widget = self.customSettings,
         descri = "Use Custom export Settings:",
         tooltip = "Whether to set yourself the number of rows, columns, \nfirst and last frame, etc. (checked) \nor use the default values (unchecked) ")])
-        
+
         self.outerLayout.addLayout(self.topLayout, 0)
-        
+
         # all this stuff will be hideable
         self.direction.addWidget(QLabel("sprites placement direction: \t"))
         self.addDescribedWidget(parent = self.direction, listWidgets = [
@@ -183,15 +183,15 @@ class UISpritesheetExporter(object):
         widget = self.horDir,
         descri = "Horizontal:",
         tooltip = "like so: \n1, 2, 3 \n4, 5, 6 \n7, 8, 9")])
-        
+
         self.addDescribedWidget(parent = self.direction, listWidgets = [
         describedWidget(
         widget = self.vertDir,
         descri = "Vertical:",
         tooltip = "like so: \n1, 4, 7 \n2, 5, 8 \n3, 6, 9")])
-        
+
         self.hideableLayout.addLayout(self.direction)
-        
+
         self.hideableLayout.addItem(self.spacerBig)
 
         defaultsHint = QLabel("Leave any parameter at 0 to get a default value:")
@@ -201,26 +201,26 @@ class UISpritesheetExporter(object):
 
         self.addDescribedWidget(parent = self.spinBoxes, listWidgets = [
         describedWidget(
-        widget = self.rows, 
-        descri = "Rows:", 
-        tooltip = "Number of rows of the spritesheet; \ndefault is trying to square \nor is assigned depending on columns number"), 
+        widget = self.rows,
+        descri = "Rows:",
+        tooltip = "Number of rows of the spritesheet; \ndefault is trying to square \nor is assigned depending on columns number"),
         describedWidget(
-        widget = self.columns, 
-        descri = "Columns:", 
+        widget = self.columns,
+        descri = "Columns:",
         tooltip = "Number of columns of the spritesheet; \ndefault is trying to square \nor is assigned depending on rows number")])
-        
+
         self.addDescribedWidget(parent = self.spinBoxes, listWidgets = [
         describedWidget(
-        widget = self.start, 
-        descri = "Start:", 
-        tooltip = "First frame of the animation timeline (included) to be added to the spritesheet; \ndefault is the Start parameter of the Animation docker"), 
+        widget = self.start,
+        descri = "Start:",
+        tooltip = "First frame of the animation timeline (included) to be added to the spritesheet; \ndefault is the Start parameter of the Animation docker"),
         describedWidget(
-        widget = self.end, 
-        descri = "End:", 
-        tooltip = "Last frame of the animation timeline (included) to be added to the spritesheet; \ndefault is the End parameter of the Animation docker"), 
+        widget = self.end,
+        descri = "End:",
+        tooltip = "Last frame of the animation timeline (included) to be added to the spritesheet; \ndefault is the End parameter of the Animation docker"),
         describedWidget(
-        widget = self.step, 
-        descri = "Step:", 
+        widget = self.step,
+        descri = "Step:",
         tooltip = "only consider every 'step' frame to be added to the spritesheet; \ndefault is 1 (use every frame)")])
 
 
@@ -228,27 +228,27 @@ class UISpritesheetExporter(object):
 
         self.addDescribedWidget(parent = self.checkBoxes, listWidgets = [
         describedWidget(
-        descri = "Remove individual sprites?", 
-        widget = self.removeTmp, 
+        descri = "Remove individual sprites?",
+        widget = self.removeTmp,
         tooltip = "Once the spritesheet export is done, \nwhether to remove the individual exported sprites")])
-        
+
         self.overwriteLayout = self.addDescribedWidget(parent = self.hiddenCheckboxLayout, listWidgets = [
         describedWidget(
-        descri = "Overwrite existant?", 
-        widget = self.overwrite, 
+        descri = "Overwrite existant?",
+        widget = self.overwrite,
         tooltip = "If there is already a folder with the same name as the individual sprites export folder, \nwhether to create a new one (unchecked) or write the sprites in the existing folder, \npossibly overwriting other files (checked)")])
-        
+
         #self.hideableLayout.addWidget(self.line2)
         #self.hideableLayout.addItem(self.spacer)
-        
-        
+
+
         self.addDescribedWidget(parent = self.spritesExportDir, listWidgets = [
         describedWidget(
-        widget = self.spritesExportDirTx, 
-        descri = "Sprites export directory:", 
+        widget = self.spritesExportDirTx,
+        descri = "Sprites export directory:",
         tooltip = "The directory the individual sprites will be exported to")])
         self.spritesExportDir.addWidget(self.spritesExportDirButt)
-        
+
         # have removeTmp toggle overwrite's and sprites export dir's visibility
         self.checkBoxes.addWidget(self.hiddenCheckbox)
         self.hideableLayout.addLayout(self.checkBoxes)
@@ -270,7 +270,7 @@ class UISpritesheetExporter(object):
 
     def exclusiveHorToVert(self):
         self.exclusiveCheckBoxUpdate(trigger = self.horDir, triggered = self.vertDir)
-        
+
     def exclusiveCheckBoxUpdate(self, trigger, triggered):
         if triggered.isChecked() == trigger.isChecked():
             triggered.setChecked(not trigger.isChecked())
