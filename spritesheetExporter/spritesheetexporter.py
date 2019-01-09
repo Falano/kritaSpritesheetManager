@@ -60,13 +60,14 @@ class SpritesheetExporter(object):
             parentPath = self.spritesExportDir.parent
             folder = str(self.spritesExportDir.parts[-1])
 
+            def exportCandidate():
+                return parentPath.joinpath(folder + str(exportNum))
+
             # in case the user has a folder with the exact same name
             # as my temporary one
-            while (parentPath.joinpath(folder + str(exportNum)).exists()):
+            while exportCandidate().exists()):
                 exportNum += 1
-
-            self.spritesExportDir = \
-                parentPath.joinpath(folder + str(exportNum))
+            self.spritesExportDir = exportCandidate()
 
         # if overwrite, spritesExportDir's value is taken
         # from the user-set choices in the dialog
