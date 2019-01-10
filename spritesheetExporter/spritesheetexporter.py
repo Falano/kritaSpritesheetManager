@@ -17,11 +17,11 @@ class SpritesheetExporter(object):
     def __init__(self):
         # user-defined variables
         self.exportName = "Spritesheet"
-        self.exportDir = Path.home()
         # remember this is a Path, not a string, and as such
-        # you can't do string operations on it (unless you convert it first)
-        self.spritesExportDir = ""
+        # you can't do string operations on it (unless you convert it first):
+        self.exportDir = Path.home()
         # this is a Path too. Trust me.
+        self.spritesExportDir = ""
         self.isDirectionHorizontal = True
         self.rows = 0
         self.columns = 0
@@ -138,6 +138,7 @@ class SpritesheetExporter(object):
         # if only one is specified, guess the other
         elif (self.rows == 0):
             self.rows = ceil(float(framesNum)/self.columns)
+
         # Though if I have to guess the number of columns,
         # it may also change the (user-set) number of rows.
         # For example, if you want ten rows from twelve sprites
