@@ -218,14 +218,14 @@ class UISpritesheetExporter(object):
                 widget=self.rows,
                 descri="Rows:",
                 tooltip="Number of rows of the spritesheet;\n" +
-                "default is trying to square\n" +
-                "or is assigned depending on columns number"),
+                "default is assigned depending on columns number\n" +
+                "or if 0 columns tries to form a square "),
             describedWidget(
                 widget=self.columns,
                 descri="Columns:",
                 tooltip="Number of columns of the spritesheet;\n" +
-                "default is trying to square\n" +
-                "or is assigned depending on rows number")])
+                "default is assigned depending on rows number\n" +
+                "or if 0 rows tries to form a square")])
 
         self.addDescribedWidget(parent=self.spinBoxes, listWidgets=[
             describedWidget(
@@ -234,13 +234,15 @@ class UISpritesheetExporter(object):
                 tooltip="" +
                 "First frame of the animation timeline (included) " +
                 "to be added to the spritesheet;\n" +
-                "default is the Start parameter of the Animation docker"),
+                "default is first keyframe after " +
+                "the Start frame of the Animation docker"),
             describedWidget(
                 widget=self.end,
                 descri="End:",
                 tooltip="Last frame of the animation timeline (included) " +
                 "to be added to the spritesheet;\n" +
-                "default is the End parameter of the Animation docker"),
+                "default is last keyframe before " +
+                "the End frame of the Animation docker"),
             describedWidget(
                 widget=self.step,
                 descri="Step:",

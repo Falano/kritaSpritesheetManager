@@ -109,7 +109,7 @@ class SpritesheetExporter(object):
 
         # check self.end and self.start values
         # and if needed input default value
-        if(self.end == 0 and self.start == 0):
+        if(self.end == 0 or self.start == 0):
             self.setStartEndFrames()
         # give default value to step
         if (self.step == 0):
@@ -127,10 +127,6 @@ class SpritesheetExporter(object):
                   "; playback self.end time: " +
                   playbackEndTime())
         framesNum = ((self.end + 1) - self.start)/self.step
-        # it would be better to have the default value be
-        # from first to last effective frame instead of asking the user
-        # to correctly set the Start and End anim values each time,
-        # but as of now krita can't I think
         doc.setBatchmode(True)  # so it won't show the export dialog window
         tmpNum = self.start
         while(doc.currentTime() <= self.end):
