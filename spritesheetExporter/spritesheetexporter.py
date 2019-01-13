@@ -39,6 +39,33 @@ class SpritesheetExporter(object):
             layer.move(int(imgNum / self.rows) * width,
                        (imgNum % self.rows) * height)
 
+    # get actual animation duration
+    def setStartEndFrames(self):
+        doc = Krita.instance().activeDocument()
+        layers = doc.topLevelNodes()
+        # get first frame of all visible layers
+        if self.start == 0:
+            for layer in layers:
+                if layer.visible() and layer.animated():
+                    frame = 0
+                    while not (layer.hasKeyframeAtTime(frame)
+                        or frame > doc.fullClipRangeEndTime()):
+                        frame +=1
+                    if self.start > frame:
+                        self.start = frame
+        # get the last frame smaller than
+        # the clip end time (whose default is 100)
+        if self.end == 0:
+            for layer in layers:
+                if layer.visible() and layer.animated():
+                    frame = doc.fullClipRangeEndTime()
+                    while not (layer.hasKeyframeAtTime(frame)
+                        or frame < 0):
+                        frame -=1
+                    if self.end < frame:
+                        self.end = frame
+
+
     # - export all frames of the animation in a temporary folder as png
     # - create a new document of the right dimensions
     #   according to self.rows and self.columns
@@ -80,10 +107,10 @@ class SpritesheetExporter(object):
         # render animation in the sprites export folder
         doc = Krita.instance().activeDocument()
 
-        # check self.end value and if needed input default value
-        # self.start's default value is 0 so I don't need to do anything
-        if(self.end == 0):
-            self.end = doc.fullClipRangeEndTime()
+        # check self.end and self.start values
+        # and if needed input default value
+        if(self.end == 0 and self.start == 0):
+            self.setStartEndFrames()
         # give default value to step
         if (self.step == 0):
             self.step = 1
