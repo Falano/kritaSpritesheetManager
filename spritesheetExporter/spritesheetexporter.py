@@ -97,7 +97,7 @@ class SpritesheetExporter(object):
 
             # in case the user has a folder with the exact same name
             # as my temporary one
-            while exportCandidate().exists()):
+            while exportCandidate().exists():
                 exportNum += 1
             self.spritesExportDir = exportCandidate()
 
