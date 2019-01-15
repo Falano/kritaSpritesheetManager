@@ -74,12 +74,17 @@ class SpritesheetExporter(object):
     # - remove tmp folder if needed
     def export(self, debugging=False):
 
+        def exportPath(suffix=""):
+            return self.exportDir.joinpath(self.exportName + suffix)
+
+        def fileNum(num):
+            return "_" + str(num).zfill(3)
+
         addedFolder = False
         # create a temporary export directory for the individual sprites
         # if the user didn't set any
         if self.spritesExportDir == "":
-            self.spritesExportDir = \
-                self.exportDir.joinpath(self.exportName + "_sprites")
+            self.spritesExportDir = exportPath("_sprites")
 
         if not self.overwrite and self.spritesExportDir.exists():
             exportNum = 0
@@ -87,13 +92,14 @@ class SpritesheetExporter(object):
             parentPath = self.spritesExportDir.parent
             folder = str(self.spritesExportDir.parts[-1])
 
+            def exportCandidate():
+                return parentPath.joinpath(folder + str(exportNum))
+
             # in case the user has a folder with the exact same name
             # as my temporary one
-            while (parentPath.joinpath(folder + str(exportNum)).exists()):
+            while exportCandidate().exists()):
                 exportNum += 1
-
-            self.spritesExportDir = \
-                parentPath.joinpath(folder + str(exportNum))
+            self.spritesExportDir = exportCandidate()
 
         # if overwrite, spritesExportDir's value is taken
         # from the user-set choices in the dialog
@@ -130,8 +136,7 @@ class SpritesheetExporter(object):
         doc.setBatchmode(True)  # so it won't show the export dialog window
         tmpNum = self.start
         while(doc.currentTime() <= self.end):
-            imageName = self.exportName + "_" + str(tmpNum).zfill(3) + ".png"
-            imagePath = str(self.spritesExportDir.joinpath(imageName))
+            imagePath = str(exportPath(fileNum(tmpNum) + ".png"))
             doc.exportImage(imagePath, InfoObject())
             doc.setCurrentTime(doc.currentTime() + self.step)
             tmpNum += self.step
@@ -199,8 +204,7 @@ class SpritesheetExporter(object):
         root_node = sheet.rootNode()
 
         while (imgNum <= self.end):
-            imageName = self.exportName + "_" + str(imgNum).zfill(3) + ".png"
-            img = str(self.spritesExportDir.joinpath(imageName))
+            img = str(exportPath(fileNum(imgNum) + ".png"))
             layer = sheet.createFileLayer(img, img, "ImageToSize")
             root_node.addChildNode(layer, None)
             self.positionLayer(
@@ -223,12 +227,9 @@ class SpritesheetExporter(object):
         # export the document to the export location
         sheet.setBatchmode(True)  # so it won't show the export dialog window
         if debugging:
-            print("exporting spritesheet to " +
-                  str(self.exportDir.joinpath(self.exportName)))
+            print("exporting spritesheet to " + str(exportPath()))
 
-        exportImagePath = \
-            str(self.exportDir.joinpath(self.exportName)) + ".png"
-        sheet.exportImage(exportImagePath, InfoObject())
+        sheet.exportImage(str(exportPath(".png")), InfoObject())
 
         # and remove the empty tmp folder when you're done
         if self.removeTmp:
