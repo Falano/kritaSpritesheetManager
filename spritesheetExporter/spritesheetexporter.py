@@ -17,17 +17,18 @@ class SpritesheetExporter(object):
     def __init__(self):
         # user-defined variables
         self.exportName = "Spritesheet"
+        self.defaultPath = Path.home().joinpath("spritesheetExportKritaTmp")
         # remember this is a Path, not a string, and as such
         # you can't do string operations on it (unless you convert it first):
         self.exportDir = Path.home()
         # this is a Path too. Trust me.
-        self.spritesExportDir = ""
+        self.spritesExportDir = self.defaultPath
         self.isDirectionHorizontal = True
         self.rows = 0
         self.columns = 0
         self.start = 0
         self.end = 0
-        self.overwrite = False
+        self.forceNew = True
         self.removeTmp = True
         self.step = 1
 
@@ -75,8 +76,11 @@ class SpritesheetExporter(object):
     # - remove tmp folder if needed
     def export(self, debugging=False):
 
-        def exportPath(suffix=""):
+        def sheetExportPath(suffix=""):
             return self.exportDir.joinpath(self.exportName + suffix)
+
+        def spritesExportPath(suffix=""):
+            return self.spritesExportDir.joinpath(self.exportName + suffix)
 
         def fileNum(num):
             return "_" + str(num).zfill(3)
@@ -84,10 +88,10 @@ class SpritesheetExporter(object):
         addedFolder = False
         # create a temporary export directory for the individual sprites
         # if the user didn't set any
-        if self.spritesExportDir == "":
-            self.spritesExportDir = exportPath("_sprites")
+        if self.spritesExportDir == self.defaultPath:
+            self.spritesExportDir = sheetExportPath("_sprites")
 
-        if not self.overwrite and self.spritesExportDir.exists():
+        if self.forceNew and self.spritesExportDir.exists():
             exportNum = 0
 
             parentPath = self.spritesExportDir.parent
@@ -102,10 +106,10 @@ class SpritesheetExporter(object):
                 exportNum += 1
             self.spritesExportDir = exportCandidate()
 
-        # if overwrite, spritesExportDir's value is taken
+        # if forceNew, spritesExportDir's value is taken
         # from the user-set choices in the dialog
 
-        # this will always be called if not overwrite
+        # this will always be called if not forceNew
         # because it will always create a new export folder
         if not (self.spritesExportDir).exists():
             addedFolder = True
@@ -137,7 +141,7 @@ class SpritesheetExporter(object):
         doc.setBatchmode(True)  # so it won't show the export dialog window
         tmpNum = self.start
         while(doc.currentTime() <= self.end):
-            imagePath = str(exportPath(fileNum(tmpNum) + ".png"))
+            imagePath = str(spritesExportPath(fileNum(tmpNum) + ".png"))
             doc.exportImage(imagePath, InfoObject())
             doc.setCurrentTime(doc.currentTime() + self.step)
             tmpNum += self.step
@@ -205,7 +209,7 @@ class SpritesheetExporter(object):
         root_node = sheet.rootNode()
 
         while (imgNum <= self.end):
-            img = str(exportPath(fileNum(imgNum) + ".png"))
+            img = str(spritesExportPath(fileNum(imgNum) + ".png"))
             layer = sheet.createFileLayer(img, img, "ImageToSize")
             root_node.addChildNode(layer, None)
             self.positionLayer(
@@ -228,9 +232,9 @@ class SpritesheetExporter(object):
         # export the document to the export location
         sheet.setBatchmode(True)  # so it won't show the export dialog window
         if debugging:
-            print("exporting spritesheet to " + str(exportPath()))
+            print("exporting spritesheet to " + str(sheetExportPath()))
 
-        sheet.exportImage(str(exportPath(".png")), InfoObject())
+        sheet.exportImage(str(sheetExportPath(".png")), InfoObject())
 
         # and remove the empty tmp folder when you're done
         if self.removeTmp:

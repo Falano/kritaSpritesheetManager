@@ -113,8 +113,8 @@ class UISpritesheetExporter(object):
         self.line.setFrameShape(QFrame.HLine)
         self.line.setFrameShadow(QFrame.Sunken)
         self.checkBoxes = QHBoxLayout()
-        self.overwrite = QCheckBox()
-        self.overwrite.setChecked(False)
+        self.forceNew = QCheckBox()
+        self.forceNew.setChecked(True)
         self.removeTmp = QCheckBox()
         self.removeTmp.setChecked(True)
 
@@ -259,18 +259,18 @@ class UISpritesheetExporter(object):
                 tooltip="Once the spritesheet export is done,\n"
                 + "whether to remove the individual exported sprites")])
 
-        self.overwriteLayout = self.addDescribedWidget(
+        self.forceNewLayout = self.addDescribedWidget(
             parent=self.hiddenCheckboxLayout,
             listWidgets=[
                 describedWidget(
-                    descri="Overwrite existant?",
-                    widget=self.overwrite,
+                    descri="Force new folder?",
+                    widget=self.forceNew,
                     tooltip="If there is already a folder " +
                     "with the same name as the individual " +
                     "sprites export folder,\n" +
-                    "whether to create a new one (unchecked) " +
+                    "whether to create a new one (checked) " +
                     "or write the sprites in the existing folder,\n"
-                    + "possibly overwriting other files (checked)")])
+                    + "possibly overwriting other files (unchecked)")])
 
         self.addDescribedWidget(parent=self.spritesExportDir, listWidgets=[
             describedWidget(
@@ -280,7 +280,7 @@ class UISpritesheetExporter(object):
                 "will be exported to")])
         self.spritesExportDir.addWidget(self.spritesExportDirButt)
 
-        # have removeTmp toggle overwrite's and sprites export dir's visibility
+        # have removeTmp toggle forceNew's and sprites export dir's visibility
         self.checkBoxes.addWidget(self.hiddenCheckbox)
         self.hideableLayout.addLayout(self.checkBoxes)
         self.hideableLayout.addWidget(self.spritesExportDirWidget)
@@ -316,7 +316,7 @@ class UISpritesheetExporter(object):
 
     def toggleHiddenParams(self):
         if self.removeTmp.isChecked():
-            self.overwrite.setChecked(False)
+            self.forceNew.setChecked(True)
             self.spritesExportDirTx.setText("")
         self.hiddenCheckbox.setDisabled(self.removeTmp.isChecked())
         self.spritesExportDirWidget.setDisabled(self.removeTmp.isChecked())
@@ -372,11 +372,11 @@ class UISpritesheetExporter(object):
         self.exp.end = self.end.value()
         self.exp.step = self.step.value()
         self.exp.removeTmp = self.removeTmp.isChecked()
-        self.exp.overwrite = self.overwrite.isChecked()
+        self.exp.forceNew = self.forceNew.isChecked()
         if self.spritesExportDirTx.text() != "":
             self.exp.spritesExportDir = Path(self.spritesExportDirTx.text())
         else:
             # important: we reset spritesheetexporter's spritesExportDir
-            self.exp.spritesExportDir = ""
+            self.exp.spritesExportDir = self.exp.defaultPath
         self.exp.export()
         self.mainDialog.hide()
