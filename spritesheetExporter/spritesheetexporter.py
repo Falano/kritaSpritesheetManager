@@ -42,17 +42,7 @@ class SpritesheetExporter(object):
     # get actual animation duration
     def setStartEndFrames(self):
         doc = Krita.instance().activeDocument()
-        layers = doc.topLevelNodes()
-        # get first frame of all visible layers
-        if self.start == 0:
-            for layer in layers:
-                if layer.visible() and layer.animated():
-                    frame = 0
-                    while not (layer.hasKeyframeAtTime(frame)
-                        or frame > doc.fullClipRangeEndTime()):
-                        frame +=1
-                    if self.start > frame:
-                        self.start = frame
+        layers = doc.topLevelNodes() 
         # get the last frame smaller than
         # the clip end time (whose default is 100)
         if self.end == 0:
@@ -64,6 +54,17 @@ class SpritesheetExporter(object):
                         frame -=1
                     if self.end < frame:
                         self.end = frame
+        # get first frame of all visible layers
+        if self.start == 0:
+            self.start = self.end
+            for layer in layers:
+                if layer.visible() and layer.animated():
+                    frame = 0
+                    while not (layer.hasKeyframeAtTime(frame)
+                        or frame > doc.fullClipRangeEndTime()):
+                        frame +=1
+                    if self.start > frame:
+                        self.start = frame
 
 
     # - export all frames of the animation in a temporary folder as png
