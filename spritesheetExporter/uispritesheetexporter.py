@@ -114,7 +114,7 @@ class UISpritesheetExporter(object):
         self.line.setFrameShadow(QFrame.Sunken)
         self.checkBoxes = QHBoxLayout()
         self.forceNew = QCheckBox()
-        self.forceNew.setChecked(True)
+        self.forceNew.setChecked(False)
         self.removeTmp = QCheckBox()
         self.removeTmp.setChecked(True)
 
@@ -316,7 +316,7 @@ class UISpritesheetExporter(object):
 
     def toggleHiddenParams(self):
         if self.removeTmp.isChecked():
-            self.forceNew.setChecked(True)
+            self.forceNew.setChecked(False)
             self.spritesExportDirTx.setText("")
         self.hiddenCheckbox.setDisabled(self.removeTmp.isChecked())
         self.spritesExportDirWidget.setDisabled(self.removeTmp.isChecked())

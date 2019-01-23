@@ -28,7 +28,7 @@ class SpritesheetExporter(object):
         self.columns = 0
         self.start = 0
         self.end = 0
-        self.forceNew = True
+        self.forceNew = False
         self.removeTmp = True
         self.step = 1
 

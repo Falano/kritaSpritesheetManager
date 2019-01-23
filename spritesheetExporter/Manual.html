@@ -23,7 +23,7 @@ This plugin allows you to easily export the active animation as a spritesheet wi
 <br>
 <h3>Options</h3>
 <p><b>export name</b>: if you type in "exportName", the name of the individual exported frames will be exportName_000.png, exportName_001.png, etc., and the spritesheet will be called exportName.png . If your name contains a comma, anything after the first comma will be ignored, and the file will still export as a png (for example, "exportName", "exportName.png", "exportName.pdf", "exportName.v12.final.finalfinal.xcf" will all export to the same name, see example just above).<br>
-<b>export directory</b>: select the folder in which the spritesheet will be exported (the frames will be exported in a subfolder of the export directory called exportName_sprites)<br>
+<b>export directory</b>: select the folder in which the spritesheet will be exported (the frames will be exported in a subfolder of the export directory called exportName_sprites if no <b>sprites export directory</b> is set)<br>
 <b>change export directory</b>: Opens a file explorer to select the Export Directory<br>
 <b>reset to current directory</b>: Resets the export directory to the directory containing the currently active .kra document<br>
 <b>export direction</b>: How the frames are placed. For example, in a 3*2 grid, frame numbers are as follows:<br>
@@ -40,6 +40,7 @@ If both rows and columns are set to 0, the default value will be used for both <
 <b>step</b>: Only consider every 'step' frame when exporting to spritesheet<br>
 If start and end are both set to 0, it will use the default value for both (that is, the actual animation length, considering all visible layers)<br>
 <b>remove individual sprites</b>: whether to remove the folder containing the individual exported sprites once finished. You'll usually want this on, but you do you.<br>
+<b>force new folder</b>: if the export folder already exists, whether to create a new one in its parent directory (checked), or export in it anyway, potentially overwriting existing files (unchecked).
 </p>
 
 <br>
@@ -52,7 +53,7 @@ If you want to <b>merge existing spritesheets</b>, open the biggest one to get a
 
 <br>
 <h3>Notes</h3>
-<p>Warning: Don't switch active window while the script is exporting, or it will get interrupted and, most likely, not create the final spritesheet and leave rogue sprite exports (and maybe a sprite export folder, depending on your settings) in your export folder.</p>
+<p><b>Warning</b>: Don't switch active window while the script is exporting, or it will get interrupted and, most likely, not create the final spritesheet and leave rogue sprite exports (and maybe a sprite export folder, depending on your settings) in your export folder. If this happens, just close the plugin window, remove the unneeded files and try exporting again.</p>
 <p>If you have comments, suggestions, or need to contact me, send me an email at: noemie.scherer@gmail.com</p>
 
 </body>
