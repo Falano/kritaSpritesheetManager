@@ -9,6 +9,7 @@ simply (with your spritesheet open) go to Image > Image Split then (in a new fil
 - **EDIT2:** The Import Animation Frames option also renders useless the **merge spritesheets** feature, as you can just File > Import Animation Frames and then Tools > Scripts > Export As Spritesheet
 
 <br/>
+
 **Installation instructions:**
 - **Download the script** using the green "clone or download" button on this page, then clicking "download as zip"
 - **Extract the plugin's .zip to krita's resources folder**, which you can find in krita clicking Settings > Manage Resources > Open Resoureces Folder
