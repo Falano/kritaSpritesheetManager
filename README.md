@@ -13,7 +13,10 @@ simply (with your spritesheet open) go to Image > Image Split then (in a new fil
 
 **Installation instructions:**
 - **Download the script** using the green "clone or download" button on this page, then clicking "download as zip"
-- **Extract the plugin's .zip to krita's resources folder**, which you can find in krita clicking Settings > Manage Resources > Open Resoureces Folder
-- **Activate the script in krita** by going to Settings > Configure Krita > Python Plugin Manager and checking Spritesheet Exporter (if krita was open, you may need to restart it to see the script in the list, I'm not sure)
+- **Import the plugin into krita**, by either: 
+- - opening krita, going to Tools > Scripts > Import Python Plugin, then selecting the zip file you downloaded, and clicking Ok into the next dialog box; or:
+- - extracting the .zip and putting both the spritesheetExporter.desktop file and the spritesheetExporter subfolder into the pykrita folder in krita's resources folder (that you can find through Settings > Manage Resources > Open Resources Folder)
+- **Restart Krita** if it was open
+- **Activate the plugin** by going to Settings > Configure Krita > Python Plugin Manager and checking Spritesheet Exporter (if krita was open, you may need to restart it to see the script in the list, I'm not sure)
 - **Restart Krita**
 - you can now use it in Tools > Scripts > Export As Spritesheet
