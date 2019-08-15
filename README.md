@@ -20,3 +20,11 @@ simply (with your spritesheet open) go to Image > Image Split then (in a new fil
 - **Activate the plugin** by going to Settings > Configure Krita > Python Plugin Manager and checking Spritesheet Exporter (if krita was open, you may need to restart it to see the script in the list, I'm not sure)
 - **Restart Krita**
 - you can now use it in Tools > Scripts > Export As Spritesheet
+
+<br/>
+<br/>
+
+**Notes:**
+**Warning:** While the script is running, avoid switching active window; it might stop the script before completion, thus not creating the final spritesheet and leaving rogue sprite exports (and maybe a sprite export folder, depending on your settings) in your export folder. If this happens, just close the plugin window, remove the unneeded files and try exporting again.
+<br>
+Check the Manual.html page for more information.
