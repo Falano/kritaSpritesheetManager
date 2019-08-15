@@ -342,9 +342,10 @@ class UISpritesheetExporter(object):
 
     # go back to the same folder where your .kra is
     def resetExportDir(self):
-        if self.doc:
+        if self.doc and self.doc.fileName():
             self.exportPath = Path(self.doc.fileName()).parents[0]
-            self.exportDirTx.setText(str(self.exportPath))
+        self.exportDirTx.setText(str(self.exportPath))
+        
 
     def changeSpritesExportDir(self):
         self.SpritesExportDirDialog = QFileDialog()
