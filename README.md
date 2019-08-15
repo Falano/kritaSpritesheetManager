@@ -4,8 +4,8 @@ krita plugin using the Krita python script manager; **requires Krita 4.2.x** or 
 
 **Exports to a spritesheet** from the animation timeline (using all visible layers) (the spritesheet's number of rows and columns are user-defined; default is Best Fit (trying to form a square))
 
-- **To import a spritesheet** to the animation timeline of a new layer, simply (with your spritesheet open) go to Image > Image Split then (in a new file of the same dimensions as one frame), [File > Import Animation Frames] (https://docs.krita.org/en/user_manual/animation.html#importing-animation-frames)
-- **To merge spritesheet**, go to [File > Import Animation Frames] (https://docs.krita.org/en/user_manual/animation.html#importing-animation-frames) and then Tools > Scripts > Export As Spritesheet
+- **To import a spritesheet** to the animation timeline of a new layer, simply (with your spritesheet open) go to Image > Image Split then (in a new file of the same dimensions as one frame), File > Import Animation Frames (https://docs.krita.org/en/user_manual/animation.html#importing-animation-frames)
+- **To merge spritesheet**, go to File > Import Animation Frames (https://docs.krita.org/en/user_manual/animation.html#importing-animation-frames) and then Tools > Scripts > Export As Spritesheet
 
 <br/>
 <br/>
