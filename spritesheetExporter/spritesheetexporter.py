@@ -76,6 +76,9 @@ class SpritesheetExporter(object):
     # - remove tmp folder if needed
     def export(self, debugging=False):
 
+        print("")
+        print("Export spritesheet start.")
+
         def sheetExportPath(suffix=""):
             return self.exportDir.joinpath(self.exportName + suffix)
 
@@ -133,10 +136,13 @@ class SpritesheetExporter(object):
                   str(doc.fullClipRangeStartTime()) +
                   "; full clip self.end: " +
                   str(doc.fullClipRangeEndTime()) +
-                  "; playback self.start time: " +
-                  doc.playbackStartTime() +
-                  "; playback self.end time: " +
-                  playbackEndTime())
+                  "; export start: " +
+                  str(self.start) +
+                  "; export end: " +
+                  str(self.end) +
+                  "; export length: " +
+                  str(self.end - self.start)
+                  )
         framesNum = ((self.end + 1) - self.start)/self.step
         doc.setBatchmode(True)  # so it won't show the export dialog window
         tmpNum = self.start
@@ -223,7 +229,7 @@ class SpritesheetExporter(object):
                 # removing temporary sprites exports
                 Path(img).unlink()
             if (debugging):
-                print("image " + str(imgNum-self.start) +
+                print("adding to spritesheet, image " + str(imgNum-self.start) +
                       " name: " + img +
                       " at pos:")
                 print(layer.position())
@@ -240,3 +246,6 @@ class SpritesheetExporter(object):
         if self.removeTmp:
             if addedFolder:
                 self.spritesExportDir.rmdir()
+
+        if debugging:
+            print("All done!")
