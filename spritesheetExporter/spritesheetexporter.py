@@ -156,6 +156,7 @@ class SpritesheetExporter(object):
         doc.setBatchmode(True)  # so it won't show the export dialog window
         tmpNum = self.start
         while(doc.currentTime() <= self.end):
+            doc.waitForDone()
             imagePath = str(spritesExportPath(fileNum(tmpNum) + ".png"))
             doc.exportImage(imagePath, InfoObject())
             doc.setCurrentTime(doc.currentTime() + self.step)
@@ -224,6 +225,7 @@ class SpritesheetExporter(object):
         root_node = sheet.rootNode()
 
         while (imgNum <= self.end):
+            doc.waitForDone()
             img = str(spritesExportPath(fileNum(imgNum) + ".png"))
             layer = sheet.createFileLayer(img, img, "ImageToSize")
             root_node.addChildNode(layer, None)
