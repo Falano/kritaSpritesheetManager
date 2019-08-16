@@ -76,8 +76,13 @@ class SpritesheetExporter(object):
     # - remove tmp folder if needed
     def export(self, debugging=False):
 
-        print("")
-        print("Export spritesheet start.")
+
+        def debugPrint(message, usingTerminal = True):
+            if usingTerminal:
+                print(message)
+            else:
+                QMessageBox.information(QWidget(), i18n("Debug info: "),
+                i18n(message))
 
         def sheetExportPath(suffix=""):
             return self.exportDir.joinpath(self.exportName + suffix)
@@ -87,6 +92,10 @@ class SpritesheetExporter(object):
 
         def fileNum(num):
             return "_" + str(num).zfill(3)
+
+        if debugging:
+            print("")
+            debugPrint("Export spritesheet start.")
 
         addedFolder = False
         # create a temporary export directory for the individual sprites
@@ -130,7 +139,7 @@ class SpritesheetExporter(object):
             self.step = 1
         doc.setCurrentTime(self.start)
         if(debugging):
-            print("animation Length: " +
+            debugPrint("animation Length: " +
                   str(doc.animationLength()) +
                   "; full clip self.start: " +
                   str(doc.fullClipRangeStartTime()) +
@@ -160,7 +169,7 @@ class SpritesheetExporter(object):
         depth = doc.colorDepth()
         profile = doc.colorProfile()
         res = doc.resolution()
-        # print(dir(doc))
+        # debugPrint(dir(doc))
 
         # getting a default value for rows and columns
         if (self.rows == 0) and (self.columns == 0):
@@ -171,7 +180,7 @@ class SpritesheetExporter(object):
             # self.rows = 1
             # self.columns = framesNum
             if (debugging):
-                print("self.rows: " + str(self.rows) +
+                debugPrint("self.rows: " + str(self.rows) +
                       "; self.columns: " + str(self.columns))
 
         # if only one is specified, guess the other
@@ -194,10 +203,10 @@ class SpritesheetExporter(object):
             self.exportName,
             col, depth, profile, res)
         if (debugging):
-            print("new doc name: " + sheet.name())
-            print("old doc width: " + str(width))
-            print("num of frames: " + str(framesNum))
-            print("new doc width: " + str(sheet.width()))
+            debugPrint("new doc name: " + sheet.name())
+            debugPrint("old doc width: " + str(width))
+            debugPrint("num of frames: " + str(framesNum))
+            debugPrint("new doc width: " + str(sheet.width()))
 
             # for debugging when the result of print() is not available
             # QMessageBox.information(QWidget(), i18n("Debug 130"),
@@ -229,16 +238,15 @@ class SpritesheetExporter(object):
                 # removing temporary sprites exports
                 Path(img).unlink()
             if (debugging):
-                print("adding to spritesheet, image " + str(imgNum-self.start) +
+                debugPrint("adding to spritesheet, image " + str(imgNum-self.start) +
                       " name: " + img +
-                      " at pos:")
-                print(layer.position())
+                      " at pos: " + str(layer.position()))
             imgNum += self.step
 
         # export the document to the export location
         sheet.setBatchmode(True)  # so it won't show the export dialog window
         if debugging:
-            print("exporting spritesheet to " + str(sheetExportPath()))
+            debugPrint("exporting spritesheet to " + str(sheetExportPath()))
 
         sheet.exportImage(str(sheetExportPath(".png")), InfoObject())
 
@@ -248,4 +256,4 @@ class SpritesheetExporter(object):
                 self.spritesExportDir.rmdir()
 
         if debugging:
-            print("All done!")
+            debugPrint("All done!")
