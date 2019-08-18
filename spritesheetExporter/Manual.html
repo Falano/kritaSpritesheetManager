@@ -53,7 +53,11 @@ If you want to <b>merge existing spritesheets</b>, open the biggest one to get a
 
 <br>
 <h3>Notes</h3>
-<p><b>Warning</b>: Don't switch active window while the script is exporting, or it will get interrupted and, most likely, not create the final spritesheet and leave rogue sprite exports (and maybe a sprite export folder, depending on your settings) in your export folder. If this happens, just close the plugin window, remove the unneeded files and try exporting again.</p>
+If you want to <b>activate debug messages</b>:<br>
+- go to the uispritesheetexporter.py file and change the second to last line, from "self.exp.export()" to "self.exp.export(True)"; it will print the debugs in the terminal (if you launched krita through the terminal)<br>
+- if you don't use the terminal, do the first step, then go to spritesheetexporter.py and change line 80 from "def debugPrint(message, usingTerminal = True):" to "def debugPrint(message, usingTerminal = False):" ; it will print the debug messages in small pop-up windows that you will have to click ok on before the script can go on.<br><br>
+
+
 <p>If you have comments, suggestions, or need to contact me, send me an email at: noemie.scherer@gmail.com</p>
 
 </body>

@@ -22,9 +22,4 @@ krita plugin using the Krita python script manager; **requires Krita 4.2.x** or 
 
 <br/>
 <br/>
-
-**Warning:** <br/>
-While the script is running, avoid switching active window; it might stop the script before completion, thus not creating the final spritesheet and leaving rogue sprite exports (and maybe a sprite export folder, depending on your settings) in your export folder. If this happens, just close the plugin window, remove the unneeded files and try exporting again.
-<br/>
-<br/>
 Check the Manual.html page for more information.
