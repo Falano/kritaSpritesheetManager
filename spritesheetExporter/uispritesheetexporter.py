@@ -93,17 +93,16 @@ class UISpritesheetExporter(object):
         # a box holding the boxes with rows columns and start end
         self.spinBoxes = QHBoxLayout(self.spinBoxesWidget)
 
-        self.rows = QSpinBox()
-        self.columns = QSpinBox()
-        self.rows.minimum = 0
-        self.columns.minimum = 0
+        self.rows = QSpinBox(minimum = self.exp.defaultSpace)
+        self.columns = QSpinBox(minimum = self.exp.defaultSpace)
+        self.rows.setValue(self.exp.defaultSpace)
+        self.columns.setValue(self.exp.defaultSpace)
 
-        self.start = QSpinBox()
-        self.end = QSpinBox()
-        self.step = QSpinBox()
-        self.start.minimum = 0
-        self.end.minimum = 0
-        self.step.minimum = 1
+        self.start = QSpinBox(minimum = self.exp.defaultTime)
+        self.end = QSpinBox(minimum = self.exp.defaultTime)
+        self.step = QSpinBox(minimum = 1)
+        self.start.setValue(self.exp.defaultTime)
+        self.end.setValue(self.exp.defaultTime)
         self.step.setValue(1)
 
         # to be placed outside of spinBoxes, still in outerLayout

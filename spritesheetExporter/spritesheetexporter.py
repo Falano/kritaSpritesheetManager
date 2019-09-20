@@ -24,10 +24,12 @@ class SpritesheetExporter(object):
         # this is a Path too. Trust me.
         self.spritesExportDir = self.defaultPath
         self.isDirectionHorizontal = True
-        self.rows = 0
-        self.columns = 0
-        self.start = 0
-        self.end = 0
+        self.defaultTime = -1
+        self.defaultSpace = 0
+        self.rows = self.defaultSpace
+        self.columns = self.defaultSpace
+        self.start = self.defaultTime
+        self.end = self.defaultTime
         self.forceNew = False
         self.removeTmp = True
         self.step = 1
@@ -46,7 +48,7 @@ class SpritesheetExporter(object):
         layers = doc.topLevelNodes() 
         # get the last frame smaller than
         # the clip end time (whose default is 100)
-        if self.end == 0:
+        if self.end == self.defaultTime:
             for layer in layers:
                 if layer.visible() and layer.animated():
                     frame = doc.fullClipRangeEndTime()
@@ -56,7 +58,7 @@ class SpritesheetExporter(object):
                     if self.end < frame:
                         self.end = frame
         # get first frame of all visible layers
-        if self.start == 0:
+        if self.start == self.defaultTime:
             self.start = self.end
             for layer in layers:
                 if layer.visible() and layer.animated():
@@ -132,11 +134,8 @@ class SpritesheetExporter(object):
 
         # check self.end and self.start values
         # and if needed input default value
-        if(self.end == 0 or self.start == 0):
+        if(self.end == self.defaultTime or self.start == self.defaultTime):
             self.setStartEndFrames()
-        # give default value to step
-        if (self.step == 0):
-            self.step = 1
         doc.setCurrentTime(self.start)
         if(debugging):
             debugPrint("animation Length: " +
@@ -173,7 +172,7 @@ class SpritesheetExporter(object):
         # debugPrint(dir(doc))
 
         # getting a default value for rows and columns
-        if (self.rows == 0) and (self.columns == 0):
+        if (self.rows == self.defaultSpace) and (self.columns == self.defaultSpace):
             # square fit
             self.columns = ceil(sqrt(framesNum))
             self.rows = ceil(float(framesNum)/self.columns)
@@ -185,7 +184,7 @@ class SpritesheetExporter(object):
                       "; self.columns: " + str(self.columns))
 
         # if only one is specified, guess the other
-        elif (self.rows == 0):
+        elif (self.rows == defaultSpace):
             self.rows = ceil(float(framesNum)/self.columns)
 
         # Though if I have to guess the number of columns,
@@ -193,7 +192,7 @@ class SpritesheetExporter(object):
         # For example, if you want ten rows from twelve sprites
         # instead of two rows of two and eight of one,
         # you'll have six rows of two
-        elif (self.columns == 0):
+        elif (self.columns == defaultSpace):
             self.columns = ceil(float(framesNum)/self.rows)
             self.rows = ceil(float(framesNum)/self.columns)
 

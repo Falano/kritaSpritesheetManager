@@ -38,7 +38,7 @@ if vertical:<br>
 If both rows and columns are set to 0, the default value will be used for both <i>(I'm torn between the default being one row or a square-ish image, I'd love to hear what other people think about this)</i><br>
 <b>start</b> and <b>end</b>: the start and end of the animation to export to spritesheet. Anything outside those values will not be considered.<br>
 <b>step</b>: Only consider every 'step' frame when exporting to spritesheet<br>
-If start and end are both set to 0, it will use the default value for both (that is, the actual animation length, considering all visible layers)<br>
+If start and end are both set to -1, it will use the default value for both (that is, the actual animation length, considering all visible layers)<br>
 <b>remove individual sprites</b>: whether to remove the folder containing the individual exported sprites once finished. You'll usually want this on, but you do you.<br>
 <b>force new folder</b>: if the export folder already exists, whether to create a new one in its parent directory (checked), or export in it anyway, potentially overwriting existing files (unchecked).
 </p>
