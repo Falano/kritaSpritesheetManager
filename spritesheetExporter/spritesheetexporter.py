@@ -42,6 +42,36 @@ class SpritesheetExporter(object):
             layer.move(int(imgNum / self.rows) * width,
                        (imgNum % self.rows) * height)
 
+    def checkLayerEnd(self, layer, doc):
+        if layer.visible():
+            if layer.animated():
+                frame = doc.fullClipRangeEndTime()
+                while not (layer.hasKeyframeAtTime(frame)
+                    or frame < 0):
+                    frame -=1
+                if self.end < frame:
+                    self.end = frame
+            if len(layer.childNodes()) != 0:
+            # if it was a group layer
+            # we also check its kids
+                for kid in layer.childNodes():
+                    self.checkLayerEnd(kid, doc)
+
+    def checkLayerStart(self, layer, doc):
+        if layer.visible():
+            if layer.animated():
+                frame = 0
+                while not (layer.hasKeyframeAtTime(frame)
+                    or frame > doc.fullClipRangeEndTime()):
+                    frame +=1
+                if self.start > frame:
+                    self.start = frame
+            if len(layer.childNodes()) != 0:
+                # if it was a group layer
+                # we also check its kids
+                for kid in layer.childNodes():
+                    self.checkLayerStart(kid, doc)
+
     # get actual animation duration
     def setStartEndFrames(self):
         doc = Krita.instance().activeDocument()
@@ -50,25 +80,12 @@ class SpritesheetExporter(object):
         # the clip end time (whose default is 100)
         if self.end == self.defaultTime:
             for layer in layers:
-                if layer.visible() and layer.animated():
-                    frame = doc.fullClipRangeEndTime()
-                    while not (layer.hasKeyframeAtTime(frame)
-                        or frame < 0):
-                        frame -=1
-                    if self.end < frame:
-                        self.end = frame
+                self.checkLayerEnd(layer, doc)
         # get first frame of all visible layers
         if self.start == self.defaultTime:
             self.start = self.end
             for layer in layers:
-                if layer.visible() and layer.animated():
-                    frame = 0
-                    while not (layer.hasKeyframeAtTime(frame)
-                        or frame > doc.fullClipRangeEndTime()):
-                        frame +=1
-                    if self.start > frame:
-                        self.start = frame
-
+                self.checkLayerStart(layer, doc)
 
     # - export all frames of the animation in a temporary folder as png
     # - create a new document of the right dimensions
