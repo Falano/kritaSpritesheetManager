@@ -201,7 +201,7 @@ class SpritesheetExporter(object):
                       "; self.columns: " + str(self.columns))
 
         # if only one is specified, guess the other
-        elif (self.rows == defaultSpace):
+        elif (self.rows == self.defaultSpace):
             self.rows = ceil(float(framesNum)/self.columns)
 
         # Though if I have to guess the number of columns,
@@ -209,7 +209,7 @@ class SpritesheetExporter(object):
         # For example, if you want ten rows from twelve sprites
         # instead of two rows of two and eight of one,
         # you'll have six rows of two
-        elif (self.columns == defaultSpace):
+        elif (self.columns == self.defaultSpace):
             self.columns = ceil(float(framesNum)/self.rows)
             self.rows = ceil(float(framesNum)/self.columns)
 
