@@ -32,7 +32,7 @@ class UISpritesheetExporter(object):
         self.exp = spritesheetexporter.SpritesheetExporter()
 
         # the main window
-        self.mainDialog = QDialog(self.app.activeWindow().qwindow())
+        self.mainDialog = QDialog()
 
         # the window is not modal and does not block input to other windows
         self.mainDialog.setWindowModality(Qt.NonModal)
