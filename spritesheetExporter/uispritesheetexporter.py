@@ -32,7 +32,7 @@ class UISpritesheetExporter(object):
         self.exp = spritesheetexporter.SpritesheetExporter()
 
         # the main window
-        self.mainDialog = QDialog(self.app.activeWindow().qwindow())
+        self.mainDialog = QDialog()
 
         # the window is not modal and does not block input to other windows
         self.mainDialog.setWindowModality(Qt.NonModal)
@@ -73,6 +73,10 @@ class UISpritesheetExporter(object):
         self.hideableWidget.setFrameShape(QFrame.Panel)
         self.hideableWidget.setFrameShadow(QFrame.Sunken)
         self.hideableLayout = QVBoxLayout(self.hideableWidget)
+
+        # we let people export each layer as an animation frame if they wish
+        self.layersAsAnimation = QCheckBox()
+        self.layersAsAnimation.setChecked(False)
 
         # We want to let the user choose if they want the final spritesheet
         # to be horizontally- or vertically-oriented.
@@ -185,6 +189,21 @@ class UISpritesheetExporter(object):
         self.outerLayout.addLayout(self.topLayout, 0)
 
         # all this stuff will be hideable
+        self.addDescribedWidget(parent=self.hideableLayout,
+            listWidgets=[
+                describedWidget(
+                    descri="use layers as animation frames ",
+                    widget=self.layersAsAnimation,
+                    tooltip="Rather than exporting a spritesheet " +
+                    "using as frames\n" + 
+                    "each frame of the timeline " +
+                    "(all visible layers merged down),\n" +
+                    "export instead a spritesheet " +
+                    "using as frames\n" + 
+                    "the current frame of each visible layer")])
+
+        self.hideableLayout.addItem(self.spacer)
+                
         self.direction.addWidget(QLabel("sprites placement direction: \t"))
         self.addDescribedWidget(parent=self.direction, listWidgets=[
             describedWidget(
@@ -365,6 +384,7 @@ class UISpritesheetExporter(object):
 
         self.exp.exportName = self.exportName.text().split('.')[0]
         self.exp.exportDir = Path(self.exportPath)
+        self.exp.layersAsAnimation = self.layersAsAnimation.isChecked()
         self.exp.isDirectionHorizontal = self.horDir.isChecked()
         self.exp.rows = self.rows.value()
         self.exp.columns = self.columns.value()
