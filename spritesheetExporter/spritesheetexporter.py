@@ -202,6 +202,8 @@ class SpritesheetExporter(object):
                 self.setStartEndFrames()
             doc.setCurrentTime(self.start)
             if(debugging):
+                ver = Application.version ()
+                isNewVersion = (int(ver[0]) > 4 or ( int(ver[0]) == 4 and int(ver[2]) >= 2))
                 if (isNewVersion):
                     debugPrint(
                     "animation Length: " +
@@ -238,7 +240,7 @@ class SpritesheetExporter(object):
             # for compatibility between animated frames as frames
             # and layers as frames
             self.start = 0
-            self.end = len(self.layersList)
+            self.end = len(self.layersList) - 1
             
             # hide all layers
             for layer in self.layersList:
@@ -254,6 +256,12 @@ class SpritesheetExporter(object):
                     self.layersList[frameIDNum].setVisible(False)
                     
                 frameIDNum += self.step
+#            for layer in self.layersStates:
+#                if (layersStates[layersList.index(layer)]):
+#                    layer.setVisible(True)
+#                    exportFrame(frameIDNum, doc)
+#                    layer.setVisible(False)
+#                    frameIDNum += self.step
             
             # restore layers state
             frameIDNum = 0
@@ -313,15 +321,25 @@ class SpritesheetExporter(object):
             debugPrint("num of frames: " + str(framesNum))
             debugPrint("new doc width: " + str(sheet.width()))
 
+            # for debugging when the result of print() is not available
+            # QMessageBox.information(QWidget(), i18n("Debug 130"),
+            #                         i18n("step: " + str(self.step) +
+            #                              "; end: " + str(self.end) +
+            #                              "; start: " + str(self.start) +
+            #                              "; rows: " + str(self.rows) +
+            #                              "; columns: " + str(self.columns) +
+            #                              "; frames number: " +
+            #                              str(framesNum)))
+
         # adding our sprites to the new document
         # and moving them to the right position
         root_node = sheet.rootNode()
         invisibleLayersNum = 0
 
 
-        while (frameIDNum < self.end):
+        while (frameIDNum <= self.end):
             doc.waitForDone()
-            if(self.layersStates[frameIDNum]):
+            if(not self.layersAsAnimation or (self.layersAsAnimation and self.layersStates[frameIDNum])):
                 img = str(spritesExportPath(fileNum(frameIDNum) + ".png"))
                 if(debugging):
                     debugPrint("managing file " + str(frameIDNum) + " at " + img)
