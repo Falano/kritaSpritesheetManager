@@ -341,7 +341,8 @@ class UISpritesheetExporter(object):
 
     def showExportDialog(self):
         self.doc = self.app.activeDocument()
-        self.resetExportDir()
+        if self.exportDirTx.text() == "":
+            self.resetExportDir()
         self.mainDialog.setWindowTitle(i18n("SpritesheetExporter"))
         self.mainDialog.setSizeGripEnabled(True)
         self.mainDialog.show()
