@@ -78,6 +78,9 @@ class UISpritesheetExporter(object):
         self.layersAsAnimation = QCheckBox()
         self.layersAsAnimation.setChecked(False)
 
+        self.writeTextureAtlas = QCheckBox()
+        self.writeTextureAtlas.setChecked(False)
+
         # We want to let the user choose if they want the final spritesheet
         # to be horizontally- or vertically-oriented.
         # There is a nifty thing called QButtonGroup() but
@@ -176,6 +179,14 @@ class UISpritesheetExporter(object):
         self.exportDir.addWidget(self.exportDirButt)
         self.exportDir.addWidget(self.exportDirResetButt)
         self.topLayout.addLayout(self.exportDir)
+
+        self.addDescribedWidget(parent=self.topLayout, listWidgets=[
+            describedWidget(
+                descri="Write json texture atlas ",
+                widget=self.writeTextureAtlas,
+                tooltip="" +
+                "Write a json texture atlas that can be\n" +
+                "used in e.g. the Phaser 3 game framework")])
 
         self.addDescribedWidget(parent=self.topLayout, listWidgets=[
             describedWidget(
@@ -386,6 +397,7 @@ class UISpritesheetExporter(object):
         self.exp.exportName = self.exportName.text().split('.')[0]
         self.exp.exportDir = Path(self.exportPath)
         self.exp.layersAsAnimation = self.layersAsAnimation.isChecked()
+        self.exp.writeTextureAtlas = self.writeTextureAtlas.isChecked()
         self.exp.isDirectionHorizontal = self.horDir.isChecked()
         self.exp.rows = self.rows.value()
         self.exp.columns = self.columns.value()

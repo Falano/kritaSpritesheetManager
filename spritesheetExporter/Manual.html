@@ -26,6 +26,17 @@ This plugin allows you to easily export the active animation as a spritesheet wi
 <b>export directory</b>: select the folder in which the spritesheet will be exported (the frames will be exported in a subfolder of the export directory called exportName_sprites if no <b>sprites export directory</b> is set)<br>
 <b>change export directory</b>: Opens a file explorer to select the Export Directory<br>
 <b>reset to current directory</b>: Resets the export directory to the directory containing the currently active .kra document<br>
+  <b>write json texture atlas</b>: Writes a json texture atlas file that can be used e.g. in the Phaser 3 game framework. The atlas filename will be "exportName.json"
+The filenames in the atlas file will be set to the numeric index of the texture. Example:
+  <pre>
+{ "frames": [
+    { "filename": 0,
+      "frame": { "x": 0, "y": 0, "w": 300, "h": 334 } },
+    { "filename": 1,
+      "frame": { "x": 300, "y": 0, "w": 300, "h": 334 } },
+...
+</pre>
+<br>
 <b>use layers as animation frames</b>: instead of exporting a spritesheet using each frame, export one using each visible layer (for the current frame); for people who have files formatted the photoshop way (timeline and layers on the same axis), or for those who don't export actual animations but sketches or something<br>
 <b>export direction</b>: How the frames are placed. For example, in a 3*2 grid, frame numbers are as follows:<br>
 if horizontal:<br>
