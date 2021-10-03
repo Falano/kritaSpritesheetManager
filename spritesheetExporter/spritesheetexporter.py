@@ -1,5 +1,6 @@
 from krita import (krita, InfoObject)
 from math import sqrt, ceil, floor
+import json
 
 from . import uispritesheetexporter
 # manages the dialog that lets you set user preferences
@@ -34,6 +35,7 @@ class SpritesheetExporter(object):
         self.removeTmp = True
         self.step = 1
         self.layersAsAnimation = False
+        self.writeTextureAtlas = False
         self.layersList = []
         self.layersStates = []
         self.offLayers = 0
@@ -337,6 +339,7 @@ class SpritesheetExporter(object):
         invisibleLayersNum = 0
 
 
+        textureAtlas = { "frames": [ ] }
         while (frameIDNum <= self.end):
             doc.waitForDone()
             if(not self.layersAsAnimation or (self.layersAsAnimation and self.layersStates[frameIDNum])):
@@ -359,6 +362,13 @@ class SpritesheetExporter(object):
                     debugPrint("adding to spritesheet, image " + str(frameIDNum-self.start) +
                           " name: " + img +
                           " at pos: " + str(layer.position()))
+                if (self.writeTextureAtlas):
+                    textureAtlas["frames"].append({
+                        "filename": frameIDNum,
+                        "frame": { "x": layer.position().x(),
+                                   "y": layer.position().y(),
+                                   "w": width,
+                                   "h": height}})
             else:
                 invisibleLayersNum += 1
             frameIDNum += self.step
@@ -369,6 +379,10 @@ class SpritesheetExporter(object):
             debugPrint("exporting spritesheet to " + str(sheetExportPath()))
 
         sheet.exportImage(str(sheetExportPath(".png")), InfoObject())
+
+        if (self.writeTextureAtlas):
+            with open(str(sheetExportPath(".json")), 'w') as f:
+                json.dump(textureAtlas, f)
 
         # and remove the empty tmp folder when you're done
         if self.removeTmp:
