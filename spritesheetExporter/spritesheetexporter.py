@@ -336,6 +336,7 @@ class SpritesheetExporter(object):
         # adding our sprites to the new document
         # and moving them to the right position
         root_node = sheet.rootNode()
+        root_node.childNodes()[0].setVisible(False) # hide the default layer filled with white
         invisibleLayersNum = 0
 
 
