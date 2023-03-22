@@ -42,11 +42,11 @@ class SpritesheetExporter(object):
 
     def positionLayer(self, layer, imgNum, width, height):
         if self.isDirectionHorizontal:
-            layer.move((imgNum % self.columns) * width,
-                       (int(imgNum/self.columns)) * height)
+            layer.move(int(imgNum % self.columns) * int(width),
+                       (int(imgNum/self.columns)) * int(height))
         else:
-            layer.move(int(imgNum / self.rows) * width,
-                       (imgNum % self.rows) * height)
+            layer.move(int(imgNum / self.rows) * int(width),
+                       int(imgNum % self.rows) * int(height))
 
     def checkLayerEnd(self, layer, doc):
         if layer.visible():
