@@ -105,8 +105,8 @@ class UISpritesheetExporter(object):
         self.rows.setValue(self.exp.defaultSpace)
         self.columns.setValue(self.exp.defaultSpace)
 
-        self.start = QSpinBox(minimum = self.exp.defaultTime)
-        self.end = QSpinBox(minimum = self.exp.defaultTime)
+        self.start = QSpinBox(minimum = self.exp.defaultTime, maximum = 9999)
+        self.end = QSpinBox(minimum = self.exp.defaultTime, maximum = 9999)
         self.step = QSpinBox(minimum = 1)
         self.start.setValue(self.exp.defaultTime)
         self.end.setValue(self.exp.defaultTime)
